@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Slide 13 — Risk Management Matrix</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== RESET + TOKENS ===== */
+    *, *::before, *::after{ margin:0; padding:0; box-sizing:border-box; }
+    html, body{ width:100%; height:100%; }
+    body{
+      font-family:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      background:#0b1220;
+      overflow:hidden;
+    }
+    :root{
+      --navy:#0B1F3A;
+      --ink:#0A1831;
+      --white:#FFFFFF;
+      --soft:#EAF0F8;
+      --muted:#6B7280;
+      --accent:#1F6AE1;
+
+      --stroke:rgba(11,31,58,.14);
+      --stroke2:rgba(11,31,58,.10);
+
+      --shadow:0 18px 44px rgba(2,6,23,.10);
+      --shadow2:0 12px 30px rgba(2,6,23,.08);
+
+      --r-xl:22px;
+      --r-lg:18px;
+      --r-md:14px;
+    }
+
+    /* ===== SLIDE CANVAS ===== */
+    .slide{
+      width:100vw;
+      height:100vh;
+      background:var(--white);
+      position:relative;
+      overflow:hidden;
+      isolation:isolate;
+    }
+    .bg{
+      position:absolute;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 14% 18%, rgba(31,106,225,.08), transparent 55%),
+        radial-gradient(circle at 86% 24%, rgba(11,31,58,.06), transparent 60%),
+        radial-gradient(circle at 84% 88%, rgba(31,106,225,.06), transparent 55%);
+    }
+
+    .wrap{
+      position:relative;
+      z-index:2;
+      height:100%;
+      padding:40px 52px 34px 52px; /* tighter -> more room for table */
+      display:grid;
+      grid-template-rows:auto auto 1fr auto;
+      gap:12px;
+    }
+
+    /* ===== HEADER ===== */
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:18px;
+    }
+    .crumb{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      min-width:420px;
+    }
+    .kicker{
+      font-size:11px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--muted);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .dot{
+      width:9px; height:9px;
+      border-radius:999px;
+      background:var(--accent);
+      box-shadow:0 0 0 6px rgba(31,106,225,.10);
+      flex:0 0 9px;
+    }
+    .title{
+      font-family:"Playfair Display", serif;
+      font-size:30px;
+      color:var(--ink);
+      letter-spacing:-.01em;
+    }
+    .title .hl{ color:var(--accent); font-weight:800; }
+
+    .meta{
+      font-size:12px;
+      color:var(--muted);
+      text-align:right;
+      line-height:1.35;
+      white-space:nowrap;
+      padding-top:2px;
+    }
+    .meta b{ color:rgba(11,31,58,.88); font-weight:800; }
+
+    /* ===== LEAD ===== */
+    .leadRow{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+    }
+    .lead{
+      font-size:16px;
+      line-height:1.42;
+      color:rgba(11,31,58,.78);
+      max-width:980px;
+    }
+    .lead b{ color:var(--ink); font-weight:800; }
+    .pillRow{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      min-width:320px;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:9px 11px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(234,240,248,.55);
+      color:rgba(11,31,58,.72);
+      font-size:11px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      font-weight:800;
+      white-space:nowrap;
+      box-shadow:0 10px 20px rgba(2,6,23,.05);
+    }
+    .pill .pDot{
+      width:7px; height:7px;
+      border-radius:999px;
+      background:var(--accent);
+      box-shadow:0 0 0 5px rgba(31,106,225,.10);
+    }
+
+    /* ===== CENTER TABLE CARD ===== */
+    .center{
+      display:grid;
+      place-items:center;
+      min-height:0;
+    }
+
+    .card{
+      width:100%;
+      max-width:1280px;           /* bigger than before */
+      height:100%;
+      max-height:640px;           /* more room for table */
+      border:1px solid var(--stroke);
+      border-radius:var(--r-xl);
+      background:rgba(255,255,255,.94);
+      box-shadow:var(--shadow);
+      padding:16px 16px 14px 16px; /* tighter */
+      position:relative;
+      overflow:hidden;
+      display:grid;
+      grid-template-rows:auto 1fr auto;
+      gap:10px;
+    }
+
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 20% 12%, rgba(31,106,225,.08), transparent 50%),
+        radial-gradient(circle at 82% 78%, rgba(11,31,58,.05), transparent 55%);
+      opacity:.62;
+      pointer-events:none;
+    }
+
+    .cardHead{
+      position:relative;
+      z-index:2;
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:12px;
+      padding:0 4px;
+      margin-bottom:12px;
+    }
+
+    .cardHead .h{
+      font-size:12px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      font-weight:900;
+      color:var(--muted);
+    }
+
+    .scaleTag{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke2);
+      background:rgba(234,240,248,.55);
+      color:rgba(11,31,58,.66);
+      font-size:11px;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      font-weight:800;
+      white-space:nowrap;
+      box-shadow:0 10px 20px rgba(2,6,23,.05);
+    }
+
+    .tableWrap{
+      position:relative;
+      z-index:2;
+      border:1px solid var(--stroke2);
+      border-radius:16px;
+      overflow:hidden;
+      background:var(--soft);
+      box-shadow:var(--shadow2);
+      height:100%;
+      margin-top:16px;
+    }
+
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      table-layout:fixed;         /* important for consistent sizing */
+      font-size:12.8px;
+      line-height:1.25;
+    }
+
+    thead th{
+      background:var(--navy);
+      color:#fff;
+      font-size:10.8px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      font-weight:900;
+      padding:10px 10px;
+      text-align:left;
+      vertical-align:middle;
+    }
+    thead th.centered{ text-align:center; }
+
+    tbody td{
+      background:var(--soft);
+      border-top:1px solid rgba(11,31,58,.10);
+      padding:9px 10px;
+      vertical-align:top;
+      color:rgba(11,31,58,.78);
+      word-wrap:break-word;
+      overflow-wrap:anywhere;
+      hyphens:auto;
+    }
+    tbody tr:first-child td{ border-top:none; }
+
+    /* Column sizing (close to your PDF layout) */
+    col.cat   { width:120px; }
+    col.desc  { width:280px; }
+    col.p     { width:44px; }
+    col.i     { width:44px; }
+    col.score { width:70px; }
+    col.mit   { width:320px; }
+    col.owner { width:120px; }
+
+    td.small, th.small { text-align:center; }
+    td.small{
+      font-weight:900;
+      color:rgba(11,31,58,.86);
+    }
+
+    .scorePill{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:42px;
+      padding:5px 9px;
+      border-radius:999px;
+      border:1px solid rgba(11,31,58,.14);
+      background:rgba(255,255,255,.66);
+      box-shadow:0 10px 18px rgba(2,6,23,.05);
+      font-weight:900;
+      letter-spacing:.02em;
+    }
+    .s9{ color:#0B1F3A; }
+    .s6{ color:#1F6AE1; }
+    .s4{ color:#6B7280; }
+
+    .catBadge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:7px 9px;
+      border-radius:999px;
+      border:1px solid rgba(11,31,58,.12);
+      background:rgba(255,255,255,.70);
+      font-size:10.8px;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      font-weight:900;
+      color:rgba(11,31,58,.82);
+      white-space:nowrap;
+    }
+    .catBadge .cDot{
+      width:7px; height:7px;
+      border-radius:999px;
+      background:var(--accent);
+      box-shadow:0 0 0 5px rgba(31,106,225,.10);
+    }
+
+    .note{
+      position:relative;
+      z-index:2;
+      text-align:center;
+      font-size:13.8px;
+      color:rgba(11,31,58,.74);
+      padding:0 8px;
+    }
+    .note b{ color:var(--ink); }
+
+    /* ===== FOOTER ===== */
+    .bottom{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:12px;
+      color:var(--muted);
+      border-top:1px solid rgba(11,31,58,.10);
+      padding-top:12px;
+      gap:18px;
+    }
+
+    /* ===== ANIMATION ===== */
+    @keyframes rise{
+      from{ opacity:0; transform:translateY(10px); }
+      to{ opacity:1; transform:translateY(0); }
+    }
+    .crumb, .meta{ animation:rise .65s ease-out both; }
+    .leadRow{ animation:rise .72s ease-out .05s both; }
+    .card{ animation:rise .78s ease-out .08s both; }
+
+    /* ===== COMPACT HEIGHT SUPPORT ===== */
+    @media (max-height:760px){
+      .wrap{ padding:34px 48px 28px 48px; gap:10px; }
+      .title{ font-size:28px; }
+      .lead{ font-size:15.6px; }
+      .card{ max-height:560px; }
+      .cardHead{ margin-bottom:10px; }
+      .tableWrap{ margin-top:12px; }
+      table{ font-size:12.4px; }
+      thead th{ font-size:10.4px; padding:9px 9px; }
+      tbody td{ padding:8px 9px; }
+      .note{ font-size:13.4px; }
+    }
+
+    @media print{
+      body{ background:#fff; }
+      .slide{ box-shadow:none; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="slide">
+    <div class="bg"></div>
+
+    <div class="wrap">
+
+      <!-- HEADER -->
+      <header class="top">
+        <div class="crumb">
+          <div class="kicker"><span class="dot"></span>Risk Management</div>
+          <div class="title">Risk Management <span class="hl">Matrix</span></div>
+        </div>
+        <div class="meta">
+          <div><b>CRM Implementation</b></div>
+          <div>Slide 13</div>
+        </div>
+      </header>
+
+      <!-- LEAD -->
+
+      <!-- CENTER TABLE -->
+      <main class="center">
+        <div class="card">
+
+          <div class="cardHead">
+            <div class="h">Risk Management Matrix (P × I)</div>
+            <div class="scaleTag">P/I: 1 = Low · 2 = Medium · 3 = High</div>
+          </div>
+
+          <div class="tableWrap" aria-label="Risk management matrix table">
+            <table>
+              <colgroup>
+                <col class="cat">
+                <col class="desc">
+                <col class="p">
+                <col class="i">
+                <col class="score">
+                <col class="mit">
+                <col class="owner">
+              </colgroup>
+
+              <thead>
+                <tr>
+                  <th>Risk Category</th>
+                  <th>Risk Description</th>
+                  <th class="centered small">P</th>
+                  <th class="centered small">I</th>
+                  <th class="centered">Score</th>
+                  <th>Mitigation Actions</th>
+                  <th>Risk Owner</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td><span class="catBadge"><span class="cDot"></span>Technical</span></td>
+                  <td>Integration difficulties with existing systems (e-commerce platform, payment tools, marketing applications) may cause data inconsistencies or service disruptions.</td>
+                  <td class="small">3</td>
+                  <td class="small">3</td>
+                  <td class="small"><span class="scorePill s9">9</span></td>
+                  <td>Implement the CRM in phases; involve CRM/IT support early; perform integration testing before go-live; validate data flows.</td>
+                  <td><b>CRM / IT<br>Support</b></td>
+                </tr>
+
+                <tr>
+                  <td><span class="catBadge"><span class="cDot"></span>Technical</span></td>
+                  <td>System bugs, performance issues, or downtime during deployment may negatively impact daily operations and customer experience.</td>
+                  <td class="small">2</td>
+                  <td class="small">3</td>
+                  <td class="small"><span class="scorePill s6">6</span></td>
+                  <td>Conduct functional testing; use a progressive rollout; prepare rollback procedures; monitor system performance closely.</td>
+                  <td><b>CRM / IT<br>Support</b></td>
+                </tr>
+
+                <tr>
+                  <td><span class="catBadge"><span class="cDot"></span>Data</span></td>
+                  <td>Poor data quality (duplicate records, missing values, inconsistent formats) can reduce the effectiveness of personalization and reporting.</td>
+                  <td class="small">3</td>
+                  <td class="small">3</td>
+                  <td class="small"><span class="scorePill s9">9</span></td>
+                  <td>Clean and standardize data before migration; define data validation rules; assign data ownership; monitor data quality regularly.</td>
+                  <td><b>Project<br>Manager</b></td>
+                </tr>
+
+                <tr>
+                  <td><span class="catBadge"><span class="cDot"></span>Data /<br>Compliance</span></td>
+                  <td>Non-compliance with data protection regulations (e.g., GDPR) due to improper handling of customer data or access rights.</td>
+                  <td class="small">2</td>
+                  <td class="small">3</td>
+                  <td class="small"><span class="scorePill s6">6</span></td>
+                  <td>Define role-based access; document data usage; ensure consent management; follow applicable data protection guidelines.</td>
+                  <td><b>Management</b></td>
+                </tr>
+
+                <tr>
+                  <td><span class="catBadge"><span class="cDot"></span>People /<br>Change</span></td>
+                  <td>Resistance to change from employees may lead to low adoption and underuse of the CRM system.</td>
+                  <td class="small">3</td>
+                  <td class="small">2</td>
+                  <td class="small"><span class="scorePill s6">6</span></td>
+                  <td>Communicate benefits clearly; provide role-based training; involve key users early; offer continuous support after go-live.</td>
+                  <td><b>Project<br>Manager</b></td>
+                </tr>
+
+                <tr>
+                  <td><span class="catBadge"><span class="cDot"></span>Project /<br>Planning</span></td>
+                  <td>Project delays caused by underestimated workload, coordination issues, or late stakeholder feedback.</td>
+                  <td class="small">2</td>
+                  <td class="small">2</td>
+                  <td class="small"><span class="scorePill s4">4</span></td>
+                  <td>Define realistic timelines; set milestones; organize regular follow-ups; validate each phase before moving forward.</td>
+                  <td><b>Project<br>Manager</b></td>
+                </tr>
+
+                <tr>
+                  <td><span class="catBadge"><span class="cDot"></span>Budget</span></td>
+                  <td>Budget overruns due to additional configuration needs or unexpected support costs.</td>
+                  <td class="small">2</td>
+                  <td class="small">2</td>
+                  <td class="small"><span class="scorePill s4">4</span></td>
+                  <td>Define project scope clearly; prioritize requirements; monitor costs regularly; validate any scope changes.</td>
+                  <td><b>Management</b></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="note">
+            <b>Key control:</b> Continuous monitoring at milestones ensures the implementation remains controlled, low-risk, and aligned with business objectives.
+          </div>
+        </div>
+      </main>
+
+      <!-- FOOTER -->
+      <footer class="bottom">
+        <div><b>Takeaway:</b> Phased delivery + clean data + governance + training are the strongest levers to reduce CRM implementation risks.</div>
+        <div>Risks</div>
+      </footer>
+
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Slide 6 — CRM Definition (E-commerce Focus)</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; }
+
+    body{
+      font-family:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      background:#0b1220;
+      overflow:hidden;
+    }
+
+    :root{
+      --navy:#0B1F3A;
+      --ink:#0A1831;
+      --white:#FFFFFF;
+      --soft:#EAF0F8;
+      --muted:#6B7280;
+      --accent:#1F6AE1;
+      --stroke:rgba(11,31,58,.14);
+      --shadow:0 22px 60px rgba(2, 6, 23, 0.16);
+      --shadow2:0 18px 44px rgba(2, 6, 23, 0.12);
+      --radius-xl:22px;
+      --radius-lg:18px;
+    }
+
+    .slide{
+      width:100vw;
+      height:100vh;
+      background:var(--white);
+      position:relative;
+      overflow:hidden;
+      isolation:isolate;
+    }
+
+    .bg{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      background:
+        radial-gradient(circle at 12% 14%, rgba(31,106,225,.08), rgba(31,106,225,0) 55%),
+        radial-gradient(circle at 88% 20%, rgba(11,31,58,.06), rgba(11,31,58,0) 60%);
+    }
+
+    .scale{
+      transform:scale(1.15);
+      transform-origin:top left;
+      width:86.96%;
+      height:86.96%;
+      position:relative;
+      z-index:2;
+    }
+
+    .wrap{
+      height:100%;
+      padding:56px 78px 54px 78px;
+      display:grid;
+      grid-template-rows:auto auto 1fr auto;
+      gap:18px;
+    }
+
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:18px;
+    }
+
+    .crumb{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      min-width:420px;
+    }
+
+    .kicker{
+      font-size:11px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--muted);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .dot{
+      width:9px;
+      height:9px;
+      border-radius:999px;
+      background:var(--accent);
+      box-shadow:0 0 0 6px rgba(31,106,225,.10);
+      flex:0 0 9px;
+    }
+
+    .title{
+      font-family:"Playfair Display", serif;
+      font-size:28px;
+      color:var(--ink);
+      letter-spacing:-.01em;
+    }
+
+    .meta{
+      font-size:12px;
+      color:var(--muted);
+      text-align:right;
+      line-height:1.35;
+      white-space:nowrap;
+      padding-top:2px;
+    }
+    .meta b{
+      color:rgba(11,31,58,.88);
+      font-weight:800;
+    }
+
+    .hl{
+      color:var(--accent);
+      font-weight:800;
+    }
+
+    .stage{
+      display:grid;
+      grid-template-rows:auto auto 1fr;
+      gap:16px;
+      align-content:start;
+    }
+
+    .def{
+      border:1px solid var(--stroke);
+      border-radius:var(--radius-xl);
+      background:rgba(255,255,255,.88);
+      box-shadow:var(--shadow);
+      padding:20px 22px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .def::before{
+      content:"";
+      position:absolute;
+      left:0; top:0; bottom:0;
+      width:6px;
+      background:linear-gradient(180deg, rgba(11,31,58,.95), rgba(31,106,225,.65));
+      opacity:.95;
+    }
+
+    .defKicker{
+      font-size:11px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--muted);
+      font-weight:900;
+      margin-left:6px;
+      margin-bottom:10px;
+    }
+
+    .defText{
+      margin-left:6px;
+      font-size:20px;
+      line-height:1.55;
+      color:rgba(11,31,58,.78);
+      max-width:1040px;
+    }
+
+    .focusRow{
+      display:grid;
+      grid-template-columns:1fr 1fr 1fr;
+      gap:14px;
+    }
+
+    .focus{
+      border:1px solid var(--stroke);
+      border-radius:var(--radius-lg);
+      background:var(--soft);
+      box-shadow:var(--shadow2);
+      padding:16px 16px 14px 16px;
+      position:relative;
+      overflow:hidden;
+      min-height:118px;
+    }
+
+    .focus::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(31,106,225,.10), transparent 45%),
+        radial-gradient(circle at 80% 70%, rgba(11,31,58,.06), transparent 52%);
+      opacity:.55;
+      pointer-events:none;
+    }
+
+    .focusHead{
+      position:relative;
+      z-index:2;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:8px;
+    }
+
+    .badge{
+      width:42px;
+      height:42px;
+      border-radius:999px;
+      background:#fff;
+      border:1px solid rgba(11,31,58,.12);
+      display:grid;
+      place-items:center;
+      flex:0 0 42px;
+      box-shadow:0 10px 22px rgba(2,6,23,.06);
+    }
+
+    .badge svg{
+      width:20px;
+      height:20px;
+      stroke:var(--navy);
+      stroke-width:1.8;
+      fill:none;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+      opacity:.95;
+    }
+
+    .focusTitle{
+      font-size:14px;
+      font-weight:900;
+      color:var(--navy);
+      letter-spacing:.14em;
+      text-transform:uppercase;
+    }
+
+    .focusText{
+      position:relative;
+      z-index:2;
+      font-size:14.5px;
+      color:rgba(11,31,58,.72);
+      line-height:1.45;
+      padding-left:54px;
+      padding-right:58px; /* room for arrow on right */
+    }
+
+    /* ✅ ARROW INSIDE EACH FOCUS BLOCK (center vertically, right border) */
+    .focusArrow{
+      position:absolute;
+      top:50%;
+      right:14px;
+      transform:translateY(-50%);
+      width:38px;
+      height:38px;
+      border-radius:14px;
+      background:rgba(255,255,255,.82);
+      border:1px solid rgba(11,31,58,.12);
+      display:grid;
+      place-items:center;
+      z-index:3;
+      box-shadow:0 10px 22px rgba(2,6,23,.06);
+      opacity:.92;
+    }
+
+    .focusArrow svg{
+      width:16px;
+      height:16px;
+      stroke:var(--navy);
+      stroke-width:2;
+      fill:none;
+      opacity:.85;
+    }
+
+    .flowWrap{
+      border:1px solid var(--stroke);
+      border-radius:var(--radius-xl);
+      background:rgba(255,255,255,.88);
+      box-shadow:var(--shadow);
+      padding:16px 18px 14px 18px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .flowWrap::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 18% 25%, rgba(31,106,225,.08), transparent 55%),
+        radial-gradient(circle at 86% 30%, rgba(11,31,58,.06), transparent 60%);
+      opacity:.55;
+      pointer-events:none;
+    }
+
+    .flowHead{
+      position:relative;
+      z-index:2;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:12px;
+    }
+
+    .flowTitle{
+      font-size:12px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--muted);
+      font-weight:900;
+    }
+
+    .flowHint{
+      font-size:12px;
+      color:rgba(11,31,58,.60);
+      white-space:nowrap;
+    }
+
+    .flow{
+      position:relative;
+      z-index:2;
+      display:grid;
+      grid-template-columns:repeat(6, 1fr);
+      gap:10px;
+      align-items:center;
+    }
+
+    .step{
+      border:1px solid rgba(11,31,58,.12);
+      border-radius:16px;
+      background:#fff;
+      padding:12px 12px 10px 12px;
+      min-height:86px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:6px;
+      box-shadow:0 12px 28px rgba(2,6,23,.06);
+      position:relative;
+      overflow:hidden;
+      padding-right:52px; /* room for arrow */
+    }
+
+    .step::before{
+      content:"";
+      position:absolute;
+      left:12px; right:12px; top:12px;
+      height:2px;
+      border-radius:999px;
+      background:linear-gradient(90deg, rgba(11,31,58,.25), rgba(11,31,58,0));
+      opacity:.9;
+    }
+
+    .sName{
+      font-size:12px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      font-weight:900;
+      color:var(--navy);
+      margin-top:6px;
+    }
+
+    .sDesc{
+      font-size:12.5px;
+      color:rgba(11,31,58,.68);
+      line-height:1.35;
+    }
+
+    /* ✅ ARROW INSIDE EACH STEP (center vertically, right border) */
+    .stepArrow{
+      position:absolute;
+      top:50%;
+      right:10px;
+      transform:translateY(-50%);
+      width:34px;
+      height:34px;
+      border-radius:14px;
+      background:rgba(234,240,248,.75);
+      border:1px solid rgba(11,31,58,.12);
+      display:grid;
+      place-items:center;
+      box-shadow:0 10px 22px rgba(2,6,23,.06);
+      opacity:.90;
+    }
+    .stepArrow svg{
+      width:14px;
+      height:14px;
+      stroke:var(--navy);
+      stroke-width:2;
+      fill:none;
+      opacity:.85;
+    }
+
+    .bottom{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:12px;
+      color:var(--muted);
+      border-top:1px solid rgba(11,31,58,.10);
+      padding-top:14px;
+      gap:18px;
+    }
+
+    @keyframes rise{
+      from{ opacity:0; transform:translateY(12px); }
+      to{ opacity:1; transform:translateY(0); }
+    }
+    .crumb, .meta{ animation:rise .7s ease-out both; }
+    .def{ animation:rise .8s ease-out .06s both; }
+    .focusRow{ animation:rise .85s ease-out .10s both; }
+    .flowWrap{ animation:rise .9s ease-out .12s both; }
+
+    @media print{
+      body{ background:#fff; }
+      .slide{ box-shadow:none; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="slide">
+    <div class="bg"></div>
+
+    <div class="scale">
+      <div class="wrap">
+
+        <header class="top">
+          <div class="crumb">
+            <div class="kicker"><span class="dot"></span>CRM Definition</div>
+            <div class="title">CRM in E-commerce: What It Really Means</div>
+          </div>
+          <div class="meta">
+            <div><b>CRM Implementation</b></div>
+            <div>Slide 6</div>
+          </div>
+        </header>
+
+        <section class="stage">
+
+          <div class="def">
+            <div class="defKicker">Definition</div>
+            <div class="defText">
+              In this project, a CRM is not a “sales tool” — it is a platform that
+              <span class="hl">centralizes customer data</span> (profiles, purchase history,
+              communication records) and captures <span class="hl">behavioral data</span> to enable
+              <span class="hl">personalized engagement</span> across the <span class="hl">customer lifecycle</span>.
+            </div>
+          </div>
+
+          <div class="focusRow" aria-label="E-commerce CRM focus">
+            <div class="focus">
+              <div class="focusHead">
+                <div class="badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M4 18V6"/>
+                    <path d="M4 18h16"/>
+                    <path d="M7 14l3-4 3 3 4-6"/>
+                    <path d="M17 7h3v3"/>
+                  </svg>
+                </div>
+                <div class="focusTitle">Behavior tracking</div>
+              </div>
+              <div class="focusText">
+                Track interactions consistently (touchpoints, browsing, purchases) to understand customer behavior and preferences.
+              </div>
+
+              <div class="focusArrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M8 12h8"/>
+                  <path d="M13 7l5 5-5 5"/>
+                </svg>
+              </div>
+            </div>
+
+            <div class="focus">
+              <div class="focusHead">
+                <div class="badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M20 12a8 8 0 0 1-14.8 4.3"/>
+                    <path d="M4 12a8 8 0 0 1 14.8-4.3"/>
+                    <path d="M6 18v-3h3"/>
+                    <path d="M18 6v3h-3"/>
+                  </svg>
+                </div>
+                <div class="focusTitle">Automation</div>
+              </div>
+              <div class="focusText">
+                Use CRM-driven flows to improve engagement and performance (recovery, lifecycle messages, targeted campaigns).
+              </div>
+
+              <div class="focusArrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M8 12h8"/>
+                  <path d="M13 7l5 5-5 5"/>
+                </svg>
+              </div>
+            </div>
+
+            <div class="focus">
+              <div class="focusHead">
+                <div class="badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="7"/>
+                    <path d="M12 5v3"/>
+                    <path d="M12 16v3"/>
+                    <path d="M5 12h3"/>
+                    <path d="M16 12h3"/>
+                  </svg>
+                </div>
+                <div class="focusTitle">Customer lifecycle</div>
+              </div>
+              <div class="focusText">
+                Coordinate marketing and service actions across lifecycle stages, not isolated one-time interactions.
+              </div>
+
+              <div class="focusArrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M8 12h8"/>
+                  <path d="M13 7l5 5-5 5"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="flowWrap" aria-label="Customer lifecycle flow">
+            <div class="flowHead">
+              <div class="flowTitle">Customer lifecycle flow</div>
+              <div class="flowHint">CRM enables continuity across stages</div>
+            </div>
+
+            <div class="flow">
+              <div class="step">
+                <div class="sName">Acquire</div>
+                <div class="sDesc">Attract visitors</div>
+                <div class="stepArrow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M8 12h8"/>
+                    <path d="M13 7l5 5-5 5"/>
+                  </svg>
+                </div>
+              </div>
+
+              <div class="step">
+                <div class="sName">Engage</div>
+                <div class="sDesc">Track behavior</div>
+                <div class="stepArrow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M8 12h8"/>
+                    <path d="M13 7l5 5-5 5"/>
+                  </svg>
+                </div>
+              </div>
+
+              <div class="step">
+                <div class="sName">Convert</div>
+                <div class="sDesc">Drive purchase</div>
+                <div class="stepArrow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M8 12h8"/>
+                    <path d="M13 7l5 5-5 5"/>
+                  </svg>
+                </div>
+              </div>
+
+              <div class="step">
+                <div class="sName">Retain</div>
+                <div class="sDesc">Repeat buying</div>
+                <div class="stepArrow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M8 12h8"/>
+                    <path d="M13 7l5 5-5 5"/>
+                  </svg>
+                </div>
+              </div>
+
+              <div class="step">
+                <div class="sName">Support</div>
+                <div class="sDesc">Resolve issues</div>
+                <div class="stepArrow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M8 12h8"/>
+                    <path d="M13 7l5 5-5 5"/>
+                  </svg>
+                </div>
+              </div>
+
+              <div class="step">
+                <div class="sName">Re-engage</div>
+                <div class="sDesc">Win-back</div>
+                <div class="stepArrow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M8 12h8"/>
+                    <path d="M13 7l5 5-5 5"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <footer class="bottom">
+          <div><b>Takeaway:</b> In e-commerce, CRM is the engine that tracks behavior and automates lifecycle engagement — not a classic sales pipeline tool.</div>
+          <div>Definition</div>
+        </footer>
+
+      </div>
+    </div>
+  </div>
+</body>
+</html>

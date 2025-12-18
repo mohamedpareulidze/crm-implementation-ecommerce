@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Governance & User Adoption</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Material Icons (kept even if not used) -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <style>
+    /* ========== RESET & TOKENS ========== */
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; }
+
+    body{
+      font-family:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      background:#0b1220; /* preview only */
+      overflow:hidden;
+    }
+
+    :root{
+      --navy:#0B1F3A;
+      --ink:#0A1831;
+      --white:#FFFFFF;
+      --soft:#EAF0F8;
+      --muted:#6B7280;
+      --accent:#1F6AE1;
+
+      --stroke:rgba(11,31,58,.14);
+      --stroke2:rgba(11,31,58,.10);
+
+      --shadow:0 18px 44px rgba(2,6,23,.10);
+      --shadow2:0 12px 30px rgba(2,6,23,.08);
+
+      --r-xl:22px;
+      --r-lg:18px;
+    }
+
+    /* ========== SLIDE CANVAS (✅ SAME AS YOUR OTHER SLIDES) ========== */
+    .slide{
+      width:100vw;
+      height:100vh;
+      background:var(--white);
+      position:relative;
+      overflow:hidden;
+      isolation:isolate;
+      display:flex;
+      flex-direction:column;
+    }
+
+    .bg{
+      position:absolute;
+      inset:0;
+      z-index:0;
+      background:
+        radial-gradient(circle at 14% 18%, rgba(31,106,225,.08), transparent 55%),
+        radial-gradient(circle at 86% 24%, rgba(11,31,58,.06), transparent 60%);
+    }
+
+    .wrap{
+      position:relative;
+      z-index:2;
+      height:100%;
+      padding:44px 64px 40px 64px;
+      display:grid;
+      grid-template-rows:auto auto 1fr auto;
+      gap:14px;
+      min-height:0;
+    }
+
+    /* ========== HEADER ========== */
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:18px;
+    }
+
+    .crumb{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      min-width:520px;
+    }
+
+    .kicker{
+      font-size:11px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--muted);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .dot{
+      width:9px;
+      height:9px;
+      border-radius:999px;
+      background:var(--accent);
+      box-shadow:0 0 0 6px rgba(31,106,225,.10);
+    }
+
+    .title{
+      font-family:"Playfair Display", serif;
+      font-size:40px;
+      color:var(--ink);
+      letter-spacing:-.01em;
+    }
+
+    .meta{
+      font-size:12px;
+      color:var(--muted);
+      text-align:right;
+      line-height:1.35;
+      white-space:nowrap;
+      padding-top:2px;
+    }
+    .meta b{ color:rgba(11,31,58,.88); font-weight:800; }
+
+    /* ========== LEAD ========== */
+    .lead{
+      font-size:20px;
+      line-height:1.45;
+      color:rgba(11,31,58,.78);
+      max-width:980px;
+    }
+    .lead b{ color:var(--ink); font-weight:800; }
+
+    /* ========== CENTER RACI CARD ========== */
+    .center{
+      min-height:0;
+      display:grid;
+      place-items:center;
+    }
+
+    .raciCard{
+      width:100%;
+      max-width:980px;
+      border:1px solid var(--stroke);
+      border-radius:var(--r-xl);
+      background:rgba(255,255,255,.94);
+      box-shadow:var(--shadow);
+      padding:22px 24px 20px 24px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .raciCard::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 20% 12%, rgba(31,106,225,.08), transparent 50%),
+        radial-gradient(circle at 80% 78%, rgba(11,31,58,.05), transparent 55%);
+      opacity:.6;
+      pointer-events:none;
+    }
+
+    .raciTitle{
+      position:relative;
+      z-index:2;
+      font-size:12px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      font-weight:900;
+      color:var(--muted);
+      margin-bottom:14px;
+      text-align:center;
+    }
+
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      position:relative;
+      z-index:2;
+      overflow:hidden;
+      border-radius:16px;
+    }
+
+    thead th{
+      background:var(--navy);
+      color:#fff;
+      font-size:12px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      font-weight:800;
+      padding:12px 10px;
+      text-align:center;
+    }
+
+    tbody td{
+      background:var(--soft);
+      border-top:1px solid var(--stroke2);
+      padding:12px 10px;
+      font-size:14px;
+      color:rgba(11,31,58,.78);
+      text-align:center;
+    }
+
+    tbody tr:first-child td{ border-top:none; }
+
+    tbody td:first-child{
+      text-align:left;
+      font-weight:600;
+      color:rgba(11,31,58,.88);
+    }
+
+    .r{ font-weight:800; color:#1F6AE1; }
+    .a{ font-weight:800; color:#0B1F3A; }
+    .c{ font-weight:700; color:#6B7280; }
+    .i{ font-weight:700; color:#9CA3AF; }
+
+    /* ========== BOTTOM NOTE ========== */
+    .note{
+      margin-top:16px;
+      text-align:center;
+      font-size:14.5px;
+      color:rgba(11,31,58,.75);
+      position:relative;
+      z-index:2;
+    }
+    .note b{ color:var(--ink); }
+
+    /* ========== FOOTER ========== */
+    .bottom{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:18px;
+      font-size:12px;
+      color:var(--muted);
+      border-top:1px solid rgba(11,31,58,.10);
+      padding-top:12px;
+    }
+
+    /* ========== ANIMATION ========== */
+    @keyframes rise{
+      from{ opacity:0; transform:translateY(10px); }
+      to{ opacity:1; transform:translateY(0); }
+    }
+    .crumb, .meta, .lead, .raciCard{ animation:rise .7s ease-out both; }
+
+    /* ========== SAFETY FOR SHORTER SCREENS (prevents bottom cut) ========== */
+    @media (max-height:760px){
+      .wrap{ padding:38px 56px 34px 56px; gap:12px; }
+      .title{ font-size:36px; }
+      .lead{ font-size:18px; }
+      thead th{ padding:10px 8px; font-size:11px; }
+      tbody td{ padding:10px 8px; font-size:13px; }
+      .note{ margin-top:12px; font-size:13.5px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="slide">
+    <div class="bg"></div>
+
+    <div class="wrap">
+
+      <!-- HEADER -->
+      <header class="top">
+        <div class="crumb">
+          <div class="kicker"><span class="dot"></span>Governance</div>
+          <div class="title">Governance & User Adoption</div>
+        </div>
+        <div class="meta">
+          <div><b>CRM Implementation</b></div>
+          <div>Slide 12</div>
+        </div>
+      </header>
+
+      <!-- LEAD -->
+      <section class="lead">
+        Clear governance and user adoption ensure that the CRM is <b>used correctly</b> and delivers value beyond technology.
+      </section>
+
+      <!-- CENTER RACI -->
+      <main class="center">
+        <div class="raciCard">
+          <div class="raciTitle">RACI Matrix — Key Activities</div>
+
+          <table aria-label="RACI matrix">
+            <thead>
+              <tr>
+                <th>Project Activities</th>
+                <th>PM</th>
+                <th>Marketing</th>
+                <th>Support</th>
+                <th>Management</th>
+                <th>CRM / IT</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Project definition and objectives</td>
+                <td class="a">A</td>
+                <td class="c">C</td>
+                <td class="c">C</td>
+                <td class="r">R</td>
+                <td class="i">I</td>
+              </tr>
+              <tr>
+                <td>Current customer management analysis</td>
+                <td class="r">R</td>
+                <td class="c">C</td>
+                <td class="c">C</td>
+                <td class="a">A</td>
+                <td class="i">I</td>
+              </tr>
+              <tr>
+                <td>CRM solution selection</td>
+                <td class="r">R</td>
+                <td class="c">C</td>
+                <td class="c">C</td>
+                <td class="a">A</td>
+                <td class="c">C</td>
+              </tr>
+              <tr>
+                <td>CRM design and configuration</td>
+                <td class="a">A</td>
+                <td class="r">R</td>
+                <td class="c">C</td>
+                <td class="i">I</td>
+                <td class="r">R</td>
+              </tr>
+              <tr>
+                <td>Data migration and system integration</td>
+                <td class="a">A</td>
+                <td class="i">I</td>
+                <td class="i">I</td>
+                <td class="i">I</td>
+                <td class="r">R</td>
+              </tr>
+              <tr>
+                <td>Testing and validation</td>
+                <td class="r">R</td>
+                <td class="c">C</td>
+                <td class="c">C</td>
+                <td class="i">I</td>
+                <td class="a">A</td>
+              </tr>
+              <tr>
+                <td>User training</td>
+                <td class="a">A</td>
+                <td class="r">R</td>
+                <td class="r">R</td>
+                <td class="i">I</td>
+                <td class="c">C</td>
+              </tr>
+              <tr>
+                <td>CRM deployment (go-live)</td>
+                <td class="r">R</td>
+                <td class="i">I</td>
+                <td class="i">I</td>
+                <td class="a">A</td>
+                <td class="c">C</td>
+              </tr>
+              <tr>
+                <td>KPI definition and monitoring</td>
+                <td class="r">R</td>
+                <td class="c">C</td>
+                <td class="c">C</td>
+                <td class="a">A</td>
+                <td class="i">I</td>
+              </tr>
+              <tr>
+                <td>Risk identification and mitigation</td>
+                <td class="r">R</td>
+                <td class="c">C</td>
+                <td class="c">C</td>
+                <td class="a">A</td>
+                <td class="c">C</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="note">
+            <b>Training and support</b> ensure adoption, reduce resistance to change, and maximize CRM value.
+          </div>
+        </div>
+      </main>
+
+      <!-- FOOTER -->
+      <footer class="bottom">
+        <div><b>Key message:</b> Technology alone is not enough — governance and people drive success.</div>
+        <div>Governance</div>
+      </footer>
+
+    </div>
+  </div>
+</body>
+</html>

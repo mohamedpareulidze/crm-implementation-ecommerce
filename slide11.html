@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Slide 11 — Implementation Strategy</title>
+
+  <!-- Fonts (same vibe as your deck) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================
+       RESET + TOKENS
+    ========================= */
+    *, *::before, *::after{ margin:0; padding:0; box-sizing:border-box; }
+    html, body{ width:100%; height:100%; }
+    body{
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      background:#0b1220;
+      overflow:hidden;
+    }
+
+    :root{
+      --navy:#0B1F3A;
+      --ink:#0A1831;
+      --white:#FFFFFF;
+      --soft:#EAF0F8;
+      --muted:#6B7280;
+      --accent:#1F6AE1;
+
+      --stroke:rgba(11,31,58,.14);
+      --stroke2:rgba(11,31,58,.10);
+
+      --shadow:0 18px 44px rgba(2, 6, 23, 0.10);
+      --shadow2:0 12px 30px rgba(2, 6, 23, 0.08);
+
+      --r-xl:22px;
+      --r-lg:18px;
+      --r-md:14px;
+    }
+
+    /* =========================
+       SLIDE CANVAS
+    ========================= */
+    .slide{
+      width:100vw;
+      height:100vh;
+      background:var(--white);
+      position:relative;
+      overflow:hidden;
+      isolation:isolate;
+    }
+
+    .bg{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      background:
+        radial-gradient(circle at 14% 16%, rgba(31,106,225,.08), rgba(31,106,225,0) 55%),
+        radial-gradient(circle at 86% 20%, rgba(11,31,58,.06), rgba(11,31,58,0) 60%),
+        radial-gradient(circle at 84% 86%, rgba(31,106,225,.06), rgba(31,106,225,0) 55%);
+    }
+
+    .wrap{
+      position:relative;
+      z-index:2;
+      height:100%;
+      padding:44px 64px 40px 64px;
+      display:grid;
+      grid-template-rows:auto auto 1fr auto;
+      gap:14px;
+    }
+
+    /* =========================
+       HEADER
+    ========================= */
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:18px;
+    }
+
+    .crumb{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      min-width:420px;
+    }
+
+    .kicker{
+      font-size:11px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--muted);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .dot{
+      width:9px;
+      height:9px;
+      border-radius:999px;
+      background:var(--accent);
+      box-shadow:0 0 0 6px rgba(31,106,225,.10);
+      flex:0 0 9px;
+    }
+
+    .title{
+      font-family:"Playfair Display", serif;
+      font-size:30px;
+      color:var(--ink);
+      letter-spacing:-.01em;
+    }
+    .title .hl{ color:var(--accent); font-weight:800; }
+
+    .meta{
+      font-size:12px;
+      color:var(--muted);
+      text-align:right;
+      line-height:1.35;
+      white-space:nowrap;
+      padding-top:2px;
+    }
+    .meta b{ color:rgba(11,31,58,.88); font-weight:800; }
+
+    /* =========================
+       LEAD LINE
+    ========================= */
+    .lead{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+    }
+
+    .leadText{
+      max-width:980px;
+      font-size:16.5px;
+      line-height:1.45;
+      color:rgba(11,31,58,.78);
+    }
+    .leadText b{ color:var(--ink); font-weight:800; }
+    .leadText .hl{ color:var(--accent); font-weight:800; }
+
+    .pillRow{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      min-width:340px;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:9px 11px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(234,240,248,.55);
+      color:rgba(11,31,58,.72);
+      font-size:11px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      font-weight:800;
+      white-space:nowrap;
+      box-shadow:0 10px 20px rgba(2,6,23,.05);
+    }
+    .pill .pDot{
+      width:7px; height:7px;
+      border-radius:999px;
+      background:var(--accent);
+      box-shadow:0 0 0 5px rgba(31,106,225,.10);
+    }
+
+    /* =========================
+       MAIN: FLOW + TIMELINE
+    ========================= */
+    .main{
+      display:grid;
+      grid-template-rows:auto 1fr;
+      gap:14px;
+      min-height:0;
+    }
+
+    /* --- Horizontal 3-step flow --- */
+    .flowCard{
+      border:1px solid var(--stroke);
+      border-radius:var(--r-xl);
+      background:rgba(255,255,255,.92);
+      box-shadow:var(--shadow);
+      padding:18px 18px 16px 18px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .flowCard::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 18% 10%, rgba(31,106,225,.09), transparent 52%),
+        radial-gradient(circle at 84% 64%, rgba(11,31,58,.05), transparent 55%);
+      opacity:.55;
+      pointer-events:none;
+    }
+
+    .flowHeader{
+      position:relative;
+      z-index:2;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:14px;
+      margin-bottom:12px;
+    }
+
+    .flowHeader .h{
+      font-size:11px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--muted);
+      font-weight:900;
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:9px 11px;
+      border-radius:999px;
+      background:rgba(234,240,248,.60);
+      border:1px solid var(--stroke2);
+      color:rgba(11,31,58,.66);
+      font-size:11.5px;
+      white-space:nowrap;
+      box-shadow:0 10px 20px rgba(2,6,23,.05);
+      font-weight:700;
+    }
+    .tag b{
+      color:rgba(11,31,58,.78);
+      font-weight:900;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      font-size:11px;
+    }
+
+    .steps{
+      position:relative;
+      z-index:2;
+      display:grid;
+      grid-template-columns:1fr auto 1fr auto 1fr;
+      align-items:stretch;
+      gap:12px;
+    }
+
+    .step{
+      border:1px solid var(--stroke2);
+      background:var(--soft);
+      border-radius:18px;
+      box-shadow:var(--shadow2);
+      padding:14px 14px 12px 14px;
+      position:relative;
+      overflow:hidden;
+      min-height:110px;
+    }
+
+    .step::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(31,106,225,.10), transparent 45%),
+        radial-gradient(circle at 80% 70%, rgba(11,31,58,.06), transparent 52%);
+      opacity:.38;
+      pointer-events:none;
+    }
+
+    .stepTop{
+      position:relative;
+      z-index:2;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:8px;
+    }
+
+    .num{
+      width:34px;
+      height:34px;
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      background:#fff;
+      border:1px solid rgba(31,106,225,.25);
+      color:rgba(11,31,58,.86);
+      font-weight:900;
+      box-shadow:0 10px 18px rgba(2,6,23,.05);
+      flex:0 0 34px;
+    }
+
+    .stepTitle{
+      font-size:13px;
+      font-weight:900;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:var(--navy);
+      flex:1;
+    }
+
+    .icon{
+      width:40px;
+      height:40px;
+      border-radius:14px;
+      background:#fff;
+      border:1px solid rgba(11,31,58,.12);
+      display:grid;
+      place-items:center;
+      box-shadow:0 10px 18px rgba(2,6,23,.05);
+      flex:0 0 40px;
+      opacity:.96;
+    }
+    .icon svg{
+      width:20px; height:20px;
+      stroke:var(--navy);
+      stroke-width:2;
+      fill:none;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+      opacity:.92;
+    }
+
+    .stepDesc{
+      position:relative;
+      z-index:2;
+      font-size:14px;
+      line-height:1.40;
+      color:rgba(11,31,58,.74);
+      padding-right:6px;
+    }
+    .stepDesc b{ color:rgba(11,31,58,.88); font-weight:800; }
+    .stepDesc .hl{ color:var(--accent); font-weight:800; }
+
+    .connector{
+      width:64px;
+      display:grid;
+      place-items:center;
+      opacity:.92;
+    }
+    .connector svg{
+      width:42px; height:20px;
+      stroke:rgba(11,31,58,.62);
+      stroke-width:2.4;
+      fill:none;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+    }
+
+    /* --- Simple timeline bar (no dates) --- */
+    .timelineCard{
+      border:1px solid var(--stroke);
+      border-radius:var(--r-xl);
+      background:rgba(255,255,255,.92);
+      box-shadow:var(--shadow);
+      padding:18px 18px 16px 18px;
+      position:relative;
+      overflow:hidden;
+      min-height:0;
+      display:grid;
+      grid-template-columns:1fr;
+      gap:12px;
+      align-content:start;
+    }
+
+    .timelineCard::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 22% 20%, rgba(11,31,58,.06), transparent 55%),
+        radial-gradient(circle at 82% 40%, rgba(31,106,225,.07), transparent 55%);
+      opacity:.55;
+      pointer-events:none;
+    }
+
+    .timelineHeader{
+      position:relative;
+      z-index:2;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:14px;
+    }
+    .timelineHeader .h{
+      font-size:11px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--muted);
+      font-weight:900;
+    }
+
+    .miniLegend{
+      position:relative;
+      z-index:2;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      color:rgba(11,31,58,.66);
+      font-size:11px;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      font-weight:800;
+    }
+    .lgItem{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:7px 9px;
+      border-radius:999px;
+      border:1px solid var(--stroke2);
+      background:rgba(234,240,248,.55);
+      box-shadow:0 10px 20px rgba(2,6,23,.05);
+    }
+    .swatch{
+      width:10px; height:10px;
+      border-radius:999px;
+      background:var(--accent);
+      box-shadow:0 0 0 5px rgba(31,106,225,.10);
+    }
+
+    .barWrap{
+      position:relative;
+      z-index:2;
+      border:1px solid var(--stroke2);
+      border-radius:16px;
+      background:var(--soft);
+      box-shadow:var(--shadow2);
+      padding:16px;
+      overflow:hidden;
+    }
+
+    .bar{
+      height:18px;
+      border-radius:999px;
+      background:rgba(11,31,58,.10);
+      position:relative;
+      overflow:hidden;
+    }
+
+    /* segmented bar */
+    .seg{
+      position:absolute;
+      top:0; bottom:0;
+      border-radius:999px;
+    }
+    .seg.plan{
+      left:0;
+      width:33.33%;
+      background:linear-gradient(90deg, rgba(11,31,58,.82), rgba(11,31,58,.72));
+    }
+    .seg.build{
+      left:33.33%;
+      width:33.33%;
+      background:linear-gradient(90deg, rgba(31,106,225,.70), rgba(31,106,225,.60));
+    }
+    .seg.deploy{
+      left:66.66%;
+      width:33.34%;
+      background:linear-gradient(90deg, rgba(11,31,58,.70), rgba(31,106,225,.55));
+    }
+
+    .ticks{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns:1fr 1fr 1fr;
+      gap:10px;
+      align-items:start;
+    }
+
+    .tick{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding:10px 10px 9px 10px;
+      border-radius:14px;
+      border:1px solid var(--stroke2);
+      background:rgba(255,255,255,.65);
+    }
+
+    .tick .tDot{
+      width:10px; height:10px;
+      border-radius:999px;
+      margin-top:4px;
+      background:var(--accent);
+      box-shadow:0 0 0 5px rgba(31,106,225,.10);
+      flex:0 0 10px;
+    }
+
+    .tText{
+      flex:1;
+      min-width:0;
+    }
+
+    .tTitle{
+      font-size:11px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      font-weight:900;
+      color:var(--navy);
+      margin-bottom:4px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .tDesc{
+      font-size:12.8px;
+      line-height:1.35;
+      color:rgba(11,31,58,.72);
+    }
+
+    /* =========================
+       FOOTER
+    ========================= */
+    .bottom{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:12px;
+      color:var(--muted);
+      border-top:1px solid rgba(11,31,58,.10);
+      padding-top:12px;
+      gap:18px;
+    }
+
+    /* =========================
+       MOTION (subtle)
+    ========================= */
+    @keyframes rise{
+      from{ opacity:0; transform:translateY(10px); }
+      to{ opacity:1; transform:translateY(0); }
+    }
+    .crumb, .meta{ animation:rise .65s ease-out both; }
+    .lead{ animation:rise .72s ease-out .05s both; }
+    .flowCard{ animation:rise .78s ease-out .08s both; }
+    .timelineCard{ animation:rise .82s ease-out .10s both; }
+
+    /* =========================
+       COMPACT HEIGHT SUPPORT
+    ========================= */
+    @media (max-height:760px){
+      .wrap{ padding:36px 56px 30px 56px; gap:12px; }
+      .title{ font-size:28px; }
+      .leadText{ font-size:15.8px; }
+
+      .flowCard{ padding:16px; }
+      .step{ min-height:102px; padding:12px 12px 11px 12px; }
+      .stepDesc{ font-size:13.6px; }
+
+      .timelineCard{ padding:16px; }
+      .barWrap{ padding:14px; }
+      .tDesc{ font-size:12.5px; }
+    }
+
+    @media print{
+      body{ background:#fff; }
+      .slide{ box-shadow:none; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="slide">
+    <div class="bg"></div>
+
+    <div class="wrap">
+
+      <!-- HEADER -->
+      <header class="top">
+        <div class="crumb">
+          <div class="kicker"><span class="dot"></span>Implementation</div>
+          <div class="title">Implementation <span class="hl">Strategy</span></div>
+        </div>
+        <div class="meta">
+          <div><b>CRM Implementation</b></div>
+          <div>Slide 11</div>
+        </div>
+      </header>
+
+      <!-- LEAD -->
+      <section class="lead">
+        <div class="leadText">
+          We implement the CRM using a <b>phased approach</b> to reduce disruption, validate each step, and ensure
+          <span class="hl">progressive adoption</span> with <b>low operational risk</b>.
+        </div>
+        <div class="pillRow" aria-hidden="true">
+          <div class="pill"><span class="pDot"></span>Phased implementation</div>
+          <div class="pill"><span class="pDot"></span>Progressive deployment</div>
+          <div class="pill"><span class="pDot"></span>Low risk</div>
+        </div>
+      </section>
+
+      <!-- MAIN -->
+      <main class="main">
+
+        <!-- 3-step horizontal flow -->
+        <section class="flowCard" aria-label="Plan Build Deploy flow">
+          <div class="flowHeader">
+            <div class="h">Horizontal delivery flow</div>
+            <div class="tag"><b>Key idea</b> validate each phase</div>
+          </div>
+
+          <div class="steps">
+
+            <!-- STEP 1 -->
+            <div class="step">
+              <div class="stepTop">
+                <div class="num">1</div>
+                <div class="stepTitle">Plan</div>
+                <div class="icon" aria-hidden="true">
+                  <!-- compass -->
+                  <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="9"/>
+                    <path d="M14.5 9.5l-2 5-5 2 2-5 5-2Z"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="stepDesc">
+                Define <b>scope</b>, objectives and stakeholders, with clear milestones to keep the project
+                <span class="hl">controlled</span>.
+              </div>
+            </div>
+
+            <div class="connector" aria-hidden="true">
+              <svg viewBox="0 0 48 20">
+                <path d="M4 10h34"/>
+                <path d="M34 4l10 6-10 6"/>
+              </svg>
+            </div>
+
+            <!-- STEP 2 -->
+            <div class="step">
+              <div class="stepTop">
+                <div class="num">2</div>
+                <div class="stepTitle">Build</div>
+                <div class="icon" aria-hidden="true">
+                  <!-- sliders -->
+                  <svg viewBox="0 0 24 24">
+                    <path d="M4 21v-7"/>
+                    <path d="M4 10V3"/>
+                    <path d="M12 21v-9"/>
+                    <path d="M12 8V3"/>
+                    <path d="M20 21v-5"/>
+                    <path d="M20 12V3"/>
+                    <path d="M2 10h4"/>
+                    <path d="M10 8h4"/>
+                    <path d="M18 12h4"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="stepDesc">
+                Configure the CRM and integrate customer data carefully to protect
+                <b>data quality</b> and reduce integration risks.
+              </div>
+            </div>
+
+            <div class="connector" aria-hidden="true">
+              <svg viewBox="0 0 48 20">
+                <path d="M4 10h34"/>
+                <path d="M34 4l10 6-10 6"/>
+              </svg>
+            </div>
+
+            <!-- STEP 3 -->
+            <div class="step">
+              <div class="stepTop">
+                <div class="num">3</div>
+                <div class="stepTitle">Deploy</div>
+                <div class="icon" aria-hidden="true">
+                  <!-- rocket -->
+                  <svg viewBox="0 0 24 24">
+                    <path d="M14 4c3 1 5 3 6 6-3 4-8 8-12 10-2-2 0-7 6-16Z"/>
+                    <path d="M10 8l6 6"/>
+                    <path d="M6 18l-2 2"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="stepDesc">
+                Test key flows and go-live progressively, supporting users for
+                <b>smooth adoption</b> and minimal disruption.
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- Simple timeline bar (no dates) -->
+        <section class="timelineCard" aria-label="Timeline bar">
+          <div class="timelineHeader">
+            <div class="h">Simple timeline (no dates)</div>
+            <div class="miniLegend" aria-hidden="true">
+              <span class="lgItem"><span class="swatch"></span> Phases</span>
+              <span class="lgItem"><span class="swatch"></span> Progressive rollout</span>
+            </div>
+          </div>
+
+          <div class="barWrap">
+            <div class="bar" role="img" aria-label="Three phase timeline bar">
+              <span class="seg plan"></span>
+              <span class="seg build"></span>
+              <span class="seg deploy"></span>
+            </div>
+
+            <div class="ticks">
+              <div class="tick">
+                <span class="tDot"></span>
+                <div class="tText">
+                  <div class="tTitle">Plan</div>
+                  <div class="tDesc">Scope, stakeholders, roadmap.</div>
+                </div>
+              </div>
+
+              <div class="tick">
+                <span class="tDot"></span>
+                <div class="tText">
+                  <div class="tTitle">Build</div>
+                  <div class="tDesc">Configuration + integration readiness.</div>
+                </div>
+              </div>
+
+              <div class="tick">
+                <span class="tDot"></span>
+                <div class="tText">
+                  <div class="tTitle">Deploy</div>
+                  <div class="tDesc">Testing, go-live, support.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- FOOTER -->
+      <footer class="bottom">
+        <div><b>Takeaway:</b> A phased strategy reduces operational disruption and keeps integration, data, and adoption risks under control.</div>
+        <div>Strategy</div>
+      </footer>
+
+    </div>
+  </div>
+</body>
+</html>

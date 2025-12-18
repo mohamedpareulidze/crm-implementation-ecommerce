@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Slide 7 — E-commerce Specific Needs</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; }
+
+    body{
+      font-family:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      background:#0b1220;
+      overflow:hidden;
+    }
+
+    :root{
+      --navy:#0B1F3A;
+      --ink:#0A1831;
+      --white:#FFFFFF;
+      --soft:#EAF0F8;
+      --muted:#6B7280;
+      --accent:#1F6AE1;
+      --stroke:rgba(11,31,58,.14);
+      --shadow:0 18px 44px rgba(2, 6, 23, 0.12);
+      --shadow2:0 12px 30px rgba(2, 6, 23, 0.09);
+      --radius-xl:22px;
+      --radius-lg:18px;
+    }
+
+    .slide{
+      width:100vw;
+      height:100vh;
+      background:var(--white);
+      position:relative;
+      overflow:hidden;
+      isolation:isolate;
+    }
+
+    .bg{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      background:
+        radial-gradient(circle at 12% 14%, rgba(31,106,225,.08), rgba(31,106,225,0) 55%),
+        radial-gradient(circle at 88% 20%, rgba(11,31,58,.06), rgba(11,31,58,0) 60%);
+    }
+
+    /* ✅ No scaling (prevents cropping on short screens) */
+    .scale{
+      transform:scale(1);
+      transform-origin:top left;
+      width:100%;
+      height:100%;
+      position:relative;
+      z-index:2;
+    }
+
+    /* ✅ Tighter vertical rhythm for short screens */
+    .wrap{
+      height:100%;
+      padding:44px 64px 40px 64px;
+      display:grid;
+      grid-template-rows:auto auto 1fr auto;
+      gap:12px;
+    }
+
+    /* Header */
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:18px;
+    }
+
+    .crumb{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      min-width:420px;
+    }
+
+    .kicker{
+      font-size:11px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--muted);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .dot{
+      width:9px;
+      height:9px;
+      border-radius:999px;
+      background:var(--accent);
+      box-shadow:0 0 0 6px rgba(31,106,225,.10);
+      flex:0 0 9px;
+    }
+
+    .title{
+      font-family:"Playfair Display", serif;
+      font-size:28px;
+      color:var(--ink);
+      letter-spacing:-.01em;
+    }
+
+    .meta{
+      font-size:12px;
+      color:var(--muted);
+      text-align:right;
+      line-height:1.35;
+      white-space:nowrap;
+      padding-top:2px;
+    }
+    .meta b{
+      color:rgba(11,31,58,.88);
+      font-weight:800;
+    }
+
+    /* Lead */
+    .lead{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+    }
+
+    .leadText{
+      max-width:980px;
+      font-size:16.5px;
+      line-height:1.45;
+      color:rgba(11,31,58,.78);
+    }
+    .leadText b{ color:var(--ink); font-weight:800; }
+
+    .chipRow{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      padding-top:0;
+      min-width:320px;
+    }
+
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:9px 11px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(234,240,248,.55);
+      color:rgba(11,31,58,.72);
+      font-size:11px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      font-weight:800;
+      white-space:nowrap;
+      box-shadow:0 10px 20px rgba(2,6,23,.05);
+    }
+
+    .chip .cDot{
+      width:7px; height:7px;
+      border-radius:999px;
+      background:var(--accent);
+      box-shadow:0 0 0 5px rgba(31,106,225,.10);
+    }
+
+    .hl{
+      color:var(--accent);
+      font-weight:800;
+    }
+
+    /* Main */
+    .stage{
+      display:grid;
+      grid-template-columns:1fr;
+      align-content:start;
+      min-height:0; /* allow inner content to size properly */
+    }
+
+    .panel{
+      border:1px solid var(--stroke);
+      border-radius:var(--radius-xl);
+      background:rgba(255,255,255,.92);
+      box-shadow:var(--shadow);
+      padding:16px 18px 14px 18px;
+      position:relative;
+      overflow:hidden;
+      min-height:0;
+    }
+
+    .panel::before{
+      content:"";
+      position:absolute;
+      left:0; top:0; bottom:0;
+      width:6px;
+      background:linear-gradient(180deg, rgba(11,31,58,.95), rgba(31,106,225,.65));
+      opacity:.95;
+    }
+
+    .panel::after{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background:
+        radial-gradient(circle at 26% 24%, rgba(31,106,225,.07), transparent 45%),
+        radial-gradient(circle at 78% 60%, rgba(11,31,58,.05), transparent 52%);
+      transform:rotate(10deg);
+      opacity:.50;
+      pointer-events:none;
+    }
+
+    .panelHead{
+      position:relative;
+      z-index:2;
+      margin-left:6px;
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom:10px;
+    }
+
+    .panelHead .h{
+      font-size:11px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--muted);
+      font-weight:900;
+    }
+
+    .eventStrip{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:9px 11px;
+      border-radius:999px;
+      background:rgba(234,240,248,.60);
+      border:1px solid rgba(11,31,58,.12);
+      color:rgba(11,31,58,.66);
+      font-size:11.5px;
+      white-space:nowrap;
+      box-shadow:0 10px 20px rgba(2,6,23,.05);
+    }
+
+    .eventStrip b{
+      color:var(--accent);
+      font-weight:900;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      font-size:11px;
+    }
+
+    .list{
+      position:relative;
+      z-index:2;
+      margin-left:6px;
+      display:grid;
+      gap:10px;
+    }
+
+    /* ✅ More compact rows + still readable */
+    .item{
+      position:relative;
+      border:1px solid rgba(11,31,58,.12);
+      border-radius:18px;
+      background:var(--soft);
+      box-shadow:var(--shadow2);
+      padding:12px 14px 11px 14px;
+      overflow:hidden;
+      min-height:70px;
+      display:flex;
+      align-items:flex-start;
+      gap:12px;
+    }
+
+    .item::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(31,106,225,.10), transparent 45%),
+        radial-gradient(circle at 80% 70%, rgba(11,31,58,.06), transparent 52%);
+      opacity:.40;
+      pointer-events:none;
+    }
+
+    .check{
+      position:relative;
+      z-index:2;
+      width:40px;
+      height:40px;
+      border-radius:999px;
+      background:#fff;
+      border:1px solid rgba(31,106,225,.30);
+      display:grid;
+      place-items:center;
+      flex:0 0 40px;
+      box-shadow:0 10px 18px rgba(2,6,23,.05);
+      margin-top:1px;
+    }
+
+    .check svg{
+      width:20px; height:20px;
+      stroke:var(--accent);
+      stroke-width:2.4;
+      fill:none;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+    }
+
+    .content{
+      position:relative;
+      z-index:2;
+      padding-top:1px;
+      padding-right:56px;
+      flex:1;
+    }
+
+    .k{
+      font-size:13px;
+      font-weight:900;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:var(--navy);
+      margin-bottom:4px;
+    }
+
+    .p{
+      font-size:14.2px;
+      color:rgba(11,31,58,.72);
+      line-height:1.40;
+      max-width:980px;
+    }
+
+    .arrow{
+      position:absolute;
+      top:50%;
+      right:12px;
+      transform:translateY(-50%);
+      width:36px;
+      height:36px;
+      border-radius:14px;
+      background:rgba(255,255,255,.82);
+      border:1px solid rgba(11,31,58,.12);
+      display:grid;
+      place-items:center;
+      z-index:3;
+      box-shadow:0 10px 18px rgba(2,6,23,.05);
+      opacity:.92;
+    }
+
+    .arrow svg{
+      width:16px;
+      height:16px;
+      stroke:var(--navy);
+      stroke-width:2;
+      fill:none;
+      opacity:.85;
+    }
+
+    /* Footer */
+    .bottom{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:12px;
+      color:var(--muted);
+      border-top:1px solid rgba(11,31,58,.10);
+      padding-top:12px;
+      gap:18px;
+    }
+
+    @keyframes rise{
+      from{ opacity:0; transform:translateY(10px); }
+      to{ opacity:1; transform:translateY(0); }
+    }
+    .crumb, .meta{ animation:rise .65s ease-out both; }
+    .lead{ animation:rise .72s ease-out .05s both; }
+    .panel{ animation:rise .78s ease-out .08s both; }
+
+    @media (max-height:760px){
+      /* extra safety for very short screens */
+      .wrap{ padding:40px 56px 36px 56px; gap:10px; }
+      .title{ font-size:26px; }
+      .leadText{ font-size:16px; }
+      .item{ min-height:66px; padding:11px 13px 10px 13px; }
+      .p{ font-size:13.8px; }
+      .chip{ font-size:10.5px; padding:8px 10px; }
+      .eventStrip{ font-size:10.8px; padding:8px 10px; }
+    }
+
+    @media print{
+      body{ background:#fff; }
+      .slide{ box-shadow:none; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="slide">
+    <div class="bg"></div>
+
+    <div class="scale">
+      <div class="wrap">
+
+        <header class="top">
+          <div class="crumb">
+            <div class="kicker"><span class="dot"></span>Requirements</div>
+            <div class="title">E-commerce Specific Needs</div>
+          </div>
+          <div class="meta">
+            <div><b>CRM Implementation</b></div>
+            <div>Slide 7</div>
+          </div>
+        </header>
+
+        <section class="lead">
+          <div class="leadText">
+            Because sales happen directly on the website, the CRM must prioritize <b>data + automation</b>
+            to improve engagement and retention (not a classic sales pipeline).
+          </div>
+          <div class="chipRow" aria-hidden="true">
+            <div class="chip"><span class="cDot"></span>Behavior events</div>
+            <div class="chip"><span class="cDot"></span>Automation</div>
+            <div class="chip"><span class="cDot"></span>Easy adoption</div>
+          </div>
+        </section>
+
+        <section class="stage">
+          <div class="panel">
+            <div class="panelHead">
+              <div class="h">Checklist — what the CRM must deliver</div>
+              <div class="eventStrip"><b>Events</b> visit • purchase • <span class="hl">abandoned cart</span> • support</div>
+            </div>
+
+            <div class="list">
+
+              <div class="item">
+                <div class="check" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M6 12l4 4 8-10"/></svg>
+                </div>
+                <div class="content">
+                  <div class="k">Customer data</div>
+                  <div class="p">
+                    Centralize profiles, orders and interaction history to build a <span class="hl">unified customer view</span>.
+                  </div>
+                </div>
+                <div class="arrow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M8 12h8"/><path d="M13 7l5 5-5 5"/></svg>
+                </div>
+              </div>
+
+              <div class="item">
+                <div class="check" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M6 12l4 4 8-10"/></svg>
+                </div>
+                <div class="content">
+                  <div class="k">Behavior events</div>
+                  <div class="p">
+                    Track key events consistently (visits, purchases, <span class="hl">abandoned carts</span>) to understand behavior and journey.
+                  </div>
+                </div>
+                <div class="arrow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M8 12h8"/><path d="M13 7l5 5-5 5"/></svg>
+                </div>
+              </div>
+
+              <div class="item">
+                <div class="check" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M6 12l4 4 8-10"/></svg>
+                </div>
+                <div class="content">
+                  <div class="k">Automation</div>
+                  <div class="p">
+                    Run segmentation and automated email/SMS flows to make engagement <span class="hl">personalized</span> and scalable.
+                  </div>
+                </div>
+                <div class="arrow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M8 12h8"/><path d="M13 7l5 5-5 5"/></svg>
+                </div>
+              </div>
+
+              <div class="item">
+                <div class="check" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M6 12l4 4 8-10"/></svg>
+                </div>
+                <div class="content">
+                  <div class="k">Integration</div>
+                  <div class="p">
+                    Integrate smoothly with the e-commerce platform and existing tools to avoid manual exports and duplicated data.
+                  </div>
+                </div>
+                <div class="arrow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M8 12h8"/><path d="M13 7l5 5-5 5"/></svg>
+                </div>
+              </div>
+
+              <div class="item">
+                <div class="check" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M6 12l4 4 8-10"/></svg>
+                </div>
+                <div class="content">
+                  <div class="k">Ease of use</div>
+                  <div class="p">
+                    Fast adoption by non-technical users (marketing + customer support) with minimal training burden.
+                  </div>
+                </div>
+                <div class="arrow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M8 12h8"/><path d="M13 7l5 5-5 5"/></svg>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <footer class="bottom">
+          <div><b>Takeaway:</b> The selected CRM must excel at behavior-based engagement (events + automation) while staying easy to integrate and easy to use.</div>
+          <div>Needs</div>
+        </footer>
+
+      </div>
+    </div>
+  </div>
+</body>
+</html>

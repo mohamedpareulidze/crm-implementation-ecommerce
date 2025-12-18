@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CRM Implementation – Presentation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="theme-color" content="#020617"/>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+    body{
+      font-family:"Inter",system-ui,sans-serif;
+      background:#f8fafc;
+      color:#0b1f3a;
+      overflow-x:hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ===== LAYOUT ===== */
+    .page{
+      min-height:100vh;
+      min-height: 100dvh;
+      padding:32px 48px;
+      display:grid;
+      grid-template-columns:1fr 1.2fr;
+      gap:48px;
+      align-items:center;
+      overflow-y: auto;
+    }
+
+    /* ===== LEFT TEXT ===== */
+    .intro{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+
+    .kicker{
+      font-size:11px;
+      letter-spacing:.22em;
+      text-transform:uppercase;
+      color:#64748b;
+    }
+
+    h1{
+      font-family:"Playfair Display",serif;
+      font-size:34px;
+      line-height:1.25;
+    }
+
+    .subtitle{
+      font-size:16px;
+      color:#475569;
+      max-width:420px;
+    }
+
+    .meta{
+      margin-top:6px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .pill{
+      padding:4px 10px;
+      font-size:12px;
+      border-radius:999px;
+      background:#e5edf8;
+      color:#0b1f3a;
+    }
+
+    .team{
+      margin-top:14px;
+      font-size:13px;
+      color:#475569;
+      line-height:1.5;
+    }
+
+    /* ===== SLIDER ===== */
+    .slider{
+      position:relative;
+      width:100%;
+      aspect-ratio:16/9;
+      background:#020617;
+      border-radius:20px;
+      overflow:hidden;
+      box-shadow:0 20px 45px rgba(2,6,23,.35);
+      touch-action: pan-y pinch-zoom;
+    }
+
+    .slides{
+      display:flex;
+      width:100%;
+      height:100%;
+      transition:transform .4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      will-change: transform;
+    }
+
+    .frame{
+      flex:0 0 100%;
+      height:100%;
+    }
+
+    iframe{
+      width:100%;
+      height:100%;
+      border:none;
+      background:#fff;
+      pointer-events: auto;
+    }
+
+    /* ===== CONTROLS ===== */
+    .arrow{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      font-size:28px;
+      padding:10px 16px;
+      cursor:pointer;
+      background:rgba(15,23,42,.85);
+      color:#e5e7eb;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.4);
+      user-select:none;
+      z-index:5;
+      transition: all 0.2s ease;
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+    }
+
+    .arrow:hover{background:#1f6ae1}
+    .arrow:active{transform: translateY(-50%) scale(0.95); background:#1f6ae1}
+    #prev{left:12px}
+    #next{right:12px}
+
+    .fullscreen-btn{
+      position:absolute;
+      bottom:12px;
+      left:12px;
+      padding:8px 14px;
+      font-size:14px;
+      font-weight:500;
+      background:rgba(255,255,255,0.95);
+      border-radius:999px;
+      cursor:pointer;
+      box-shadow:0 6px 18px rgba(0,0,0,.3);
+      z-index:5;
+      display:flex;
+      align-items:center;
+      gap:6px;
+      transition: all 0.2s ease;
+      border:none;
+    }
+
+    .fullscreen-btn:hover{background:#fff; transform: scale(1.05);}
+    .fullscreen-btn:active{transform: scale(0.98);}
+
+    .indicator{
+      position:absolute;
+      bottom:12px;
+      right:14px;
+      font-size:12px;
+      color:#e5e7eb;
+      background:rgba(15,23,42,.9);
+      padding:6px 12px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.4);
+      z-index:5;
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+    }
+
+    .indicator span{
+      font-weight:600;
+      color:#38bdf8;
+    }
+
+    /* Progress bar */
+    .progress-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #38bdf8, #1f6ae1);
+      transition: width 0.4s ease;
+      z-index: 6;
+    }
+
+    /* ===== FULLSCREEN STYLES ===== */
+    .slider:fullscreen,
+    .slider:-webkit-full-screen{
+      width:100vw;
+      height:100vh;
+      border-radius:0;
+      background:#000;
+    }
+
+    .slider.mobile-fullscreen {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      height: 100dvh !important;
+      border-radius: 0 !important;
+      z-index: 9999 !important;
+      background: #000 !important;
+    }
+
+    .slider:fullscreen .fullscreen-btn,
+    .slider:-webkit-full-screen .fullscreen-btn,
+    .slider.mobile-fullscreen .fullscreen-btn {
+      bottom: 20px;
+      left: 20px;
+    }
+
+    .slider:fullscreen .indicator,
+    .slider:-webkit-full-screen .indicator,
+    .slider.mobile-fullscreen .indicator {
+      bottom: 20px;
+      right: 20px;
+    }
+
+    .slider:fullscreen .arrow,
+    .slider:-webkit-full-screen .arrow,
+    .slider.mobile-fullscreen .arrow {
+      padding: 14px 20px;
+      font-size: 32px;
+    }
+
+    .slider:fullscreen #prev,
+    .slider:-webkit-full-screen #prev,
+    .slider.mobile-fullscreen #prev {
+      left: 20px;
+    }
+
+    .slider:fullscreen #next,
+    .slider:-webkit-full-screen #next,
+    .slider.mobile-fullscreen #next {
+      right: 20px;
+    }
+
+    /* Hide body scroll when in mobile fullscreen */
+    body.fs-active {
+      overflow: hidden !important;
+    }
+
+    /* ===== RESPONSIVE - TABLET ===== */
+    @media(max-width:1024px){
+      .page{
+        grid-template-columns:1fr;
+        padding:24px 20px;
+        gap: 32px;
+      }
+      
+      h1 {
+        font-size: 28px;
+      }
+      
+      .subtitle {
+        font-size: 15px;
+      }
+      
+      .slider {
+        border-radius: 16px;
+      }
+    }
+
+    /* ===== RESPONSIVE - MOBILE ===== */
+    @media(max-width:640px){
+      .page{
+        padding:16px;
+        gap: 24px;
+        min-height: auto;
+      }
+      
+      .intro {
+        gap: 12px;
+      }
+      
+      .kicker {
+        font-size: 10px;
+      }
+      
+      h1 {
+        font-size: 22px;
+      }
+      
+      .subtitle {
+        font-size: 14px;
+      }
+      
+      .pill {
+        padding: 3px 8px;
+        font-size: 11px;
+      }
+      
+      .team {
+        font-size: 12px;
+      }
+      
+      .slider {
+        border-radius: 12px;
+        aspect-ratio: 16/10;
+      }
+      
+      .arrow {
+        font-size: 22px;
+        padding: 8px 12px;
+      }
+      
+      #prev { left: 8px; }
+      #next { right: 8px; }
+      
+      .fullscreen-btn {
+        padding: 6px 10px;
+        font-size: 12px;
+        bottom: 8px;
+        left: 8px;
+      }
+      
+      .indicator {
+        font-size: 10px;
+        padding: 4px 8px;
+        bottom: 8px;
+        right: 8px;
+      }
+    }
+
+    /* ===== MOBILE FULLSCREEN OPTIMIZATIONS ===== */
+    @media(max-width:640px){
+      .slider:fullscreen,
+      .slider:-webkit-full-screen,
+      .slider.mobile-fullscreen {
+        aspect-ratio: unset;
+      }
+      
+      .slider:fullscreen .arrow,
+      .slider:-webkit-full-screen .arrow,
+      .slider.mobile-fullscreen .arrow {
+        padding: 12px 16px;
+        font-size: 26px;
+      }
+      
+      .slider:fullscreen #prev,
+      .slider:-webkit-full-screen #prev,
+      .slider.mobile-fullscreen #prev {
+        left: 10px;
+      }
+      
+      .slider:fullscreen #next,
+      .slider:-webkit-full-screen #next,
+      .slider.mobile-fullscreen #next {
+        right: 10px;
+      }
+      
+      .slider:fullscreen .fullscreen-btn,
+      .slider:-webkit-full-screen .fullscreen-btn,
+      .slider.mobile-fullscreen .fullscreen-btn {
+        bottom: 16px;
+        left: 16px;
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+      
+      .slider:fullscreen .indicator,
+      .slider:-webkit-full-screen .indicator,
+      .slider.mobile-fullscreen .indicator {
+        bottom: 16px;
+        right: 16px;
+        font-size: 11px;
+      }
+    }
+
+    /* Landscape mobile */
+    @media(max-height:500px) and (orientation: landscape){
+      .page {
+        padding: 12px;
+        grid-template-columns: 0.8fr 1.2fr;
+        gap: 20px;
+      }
+      
+      .intro {
+        gap: 8px;
+      }
+      
+      h1 {
+        font-size: 20px;
+      }
+      
+      .subtitle, .team {
+        display: none;
+      }
+      
+      .slider {
+        aspect-ratio: unset;
+        height: calc(100vh - 24px);
+        height: calc(100dvh - 24px);
+      }
+    }
+
+    /* Swipe hint animation */
+    @keyframes swipeHint {
+      0%, 100% { opacity: 0; transform: translateX(0); }
+      50% { opacity: 1; transform: translateX(-10px); }
+    }
+
+    .swipe-hint {
+      position: absolute;
+      top: 50%;
+      right: 60px;
+      transform: translateY(-50%);
+      color: rgba(255,255,255,0.6);
+      font-size: 14px;
+      animation: swipeHint 2s ease-in-out 3;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    @media(min-width:641px){
+      .swipe-hint { display: none; }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="page">
+
+  <!-- LEFT -->
+  <section class="intro">
+    <div class="kicker">CRM Case Study · Project Management</div>
+    <h1>CRM Implementation for Improved Customer Engagement</h1>
+    <p class="subtitle">
+      A structured CRM rollout for a retail e-commerce company,
+      focusing on data centralization, automation, and customer experience.
+    </p>
+
+    <div class="meta">
+      <span class="pill">Master 2</span>
+      <span class="pill">Information Systems</span>
+      <span class="pill">2025–2026</span>
+    </div>
+
+    <div class="team">
+      <strong>Project team</strong><br>
+      Mohamed Pareulidze · Aroosha Sudheer · Charbel Taouk<br>
+      Dhikra Semmar · Eliz Sager · Oumaima Yebari<br>
+      Ousmane Sarr · Sanus Thapa
+    </div>
+  </section>
+
+  <!-- SLIDER -->
+  <section class="slider" id="slider">
+    <div class="slides" id="slides">
+
+      <!-- SLIDES -->
+      <div class="frame"><iframe src="slide1.html"></iframe></div>
+      <div class="frame"><iframe src="slide2.html"></iframe></div>
+      <div class="frame"><iframe src="slide3.html"></iframe></div>
+      <div class="frame"><iframe src="slide4.html"></iframe></div>
+      <div class="frame"><iframe src="slide5.html"></iframe></div>
+      <div class="frame"><iframe src="slide6.html"></iframe></div>
+      <div class="frame"><iframe src="slide7.html"></iframe></div>
+      <div class="frame"><iframe src="slide8.html"></iframe></div>
+      <div class="frame"><iframe src="slide9.html"></iframe></div>
+      <div class="frame"><iframe src="slide10.html"></iframe></div>
+      <div class="frame"><iframe src="slide11.html"></iframe></div>
+      <div class="frame"><iframe src="slide12.html"></iframe></div>
+      <div class="frame"><iframe src="slide13.html"></iframe></div>
+      <div class="frame"><iframe src="slide14.html"></iframe></div>
+      <div class="frame"><iframe src="slide15.html"></iframe></div>
+
+    </div>
+
+    <div class="progress-bar" id="progress"></div>
+    <span class="swipe-hint">← Swipe</span>
+    <button class="fullscreen-btn" onclick="toggleFS()" aria-label="Toggle fullscreen">
+      <span id="fs-icon">⛶</span> <span id="fs-text">Fullscreen</span>
+    </button>
+    <div class="arrow" id="prev" aria-label="Previous slide">‹</div>
+    <div class="arrow" id="next" aria-label="Next slide">›</div>
+    <div class="indicator">Slide <span id="cur">1</span> / <span id="tot">15</span></div>
+  </section>
+
+</div>
+
+<script>
+  let i = 0;
+  const slider = document.getElementById("slider");
+  const slides = document.getElementById("slides");
+  const progress = document.getElementById("progress");
+  const total = slides.children.length;
+  let isMobileFullscreen = false;
+  
+  document.getElementById("tot").textContent = total;
+
+  function update(){
+    slides.style.transform = `translateX(-${i*100}%)`;
+    document.getElementById("cur").textContent = i+1;
+    progress.style.width = `${((i+1)/total)*100}%`;
+  }
+
+  // Navigation
+  document.getElementById("next").onclick = () => {
+    i = (i + 1) % total;
+    update();
+  };
+
+  document.getElementById("prev").onclick = () => {
+    i = (i - 1 + total) % total;
+    update();
+  };
+
+  // Keyboard navigation
+  document.addEventListener("keydown", e => {
+    if(e.key === "ArrowRight" || e.key === "Enter" || e.key === " "){ 
+      e.preventDefault();
+      i=(i+1)%total; 
+      update(); 
+    }
+    if(e.key === "ArrowLeft"){ 
+      i=(i-1+total)%total; 
+      update(); 
+    }
+    if(e.key === "Escape" && isMobileFullscreen){
+      exitMobileFullscreen();
+    }
+    if(e.key === "f" || e.key === "F"){
+      toggleFS();
+    }
+  });
+
+  // Touch/Swipe support
+  let touchStartX = 0;
+  let touchEndX = 0;
+  const minSwipeDistance = 50;
+
+  slider.addEventListener('touchstart', e => {
+    touchStartX = e.changedTouches[0].screenX;
+  }, { passive: true });
+
+  slider.addEventListener('touchend', e => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+  }, { passive: true });
+
+  function handleSwipe() {
+    const distance = touchEndX - touchStartX;
+    if (Math.abs(distance) > minSwipeDistance) {
+      if (distance < 0) {
+        // Swipe left - next slide
+        i = (i + 1) % total;
+      } else {
+        // Swipe right - previous slide
+        i = (i - 1 + total) % total;
+      }
+      update();
+    }
+  }
+
+  // Fullscreen handling
+  function toggleFS(){
+    const isInFullscreen = document.fullscreenElement || 
+                           document.webkitFullscreenElement || 
+                           document.mozFullScreenElement ||
+                           isMobileFullscreen;
+    
+    if(!isInFullscreen){
+      enterFullscreen();
+    } else {
+      exitFullscreen();
+    }
+  }
+
+  function enterFullscreen() {
+    // Try native fullscreen first
+    if (slider.requestFullscreen) {
+      slider.requestFullscreen().catch(() => enterMobileFullscreen());
+    } else if (slider.webkitRequestFullscreen) {
+      slider.webkitRequestFullscreen();
+    } else if (slider.mozRequestFullScreen) {
+      slider.mozRequestFullScreen();
+    } else {
+      // Fallback for iOS and other browsers without fullscreen API
+      enterMobileFullscreen();
+    }
+  }
+
+  function enterMobileFullscreen() {
+    slider.classList.add('mobile-fullscreen');
+    document.body.classList.add('fs-active');
+    isMobileFullscreen = true;
+    updateFsButton(true);
+    
+    // Try to hide the address bar on mobile
+    window.scrollTo(0, 1);
+    
+    // Lock orientation if possible (for supported browsers)
+    if (screen.orientation && screen.orientation.lock) {
+      screen.orientation.lock('landscape').catch(() => {});
+    }
+  }
+
+  function exitMobileFullscreen() {
+    slider.classList.remove('mobile-fullscreen');
+    document.body.classList.remove('fs-active');
+    isMobileFullscreen = false;
+    updateFsButton(false);
+    
+    if (screen.orientation && screen.orientation.unlock) {
+      screen.orientation.unlock();
+    }
+  }
+
+  function exitFullscreen() {
+    if (isMobileFullscreen) {
+      exitMobileFullscreen();
+    } else if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    }
+  }
+
+  function updateFsButton(isFullscreen) {
+    const icon = document.getElementById('fs-icon');
+    const text = document.getElementById('fs-text');
+    if (isFullscreen) {
+      icon.textContent = '✕';
+      text.textContent = 'Exit';
+    } else {
+      icon.textContent = '⛶';
+      text.textContent = 'Fullscreen';
+    }
+  }
+
+  // Listen for fullscreen changes
+  document.addEventListener('fullscreenchange', () => {
+    updateFsButton(!!document.fullscreenElement);
+  });
+  document.addEventListener('webkitfullscreenchange', () => {
+    updateFsButton(!!document.webkitFullscreenElement);
+  });
+
+  // Double-tap to fullscreen on mobile
+  let lastTap = 0;
+  slider.addEventListener('touchend', e => {
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - lastTap;
+    if (tapLength < 300 && tapLength > 0) {
+      toggleFS();
+      e.preventDefault();
+    }
+    lastTap = currentTime;
+  });
+
+  // Initialize progress bar
+  update();
+
+  // Hide swipe hint after first swipe
+  slider.addEventListener('touchend', () => {
+    const hint = document.querySelector('.swipe-hint');
+    if (hint) hint.style.display = 'none';
+  }, { once: true });
+</script>
+
+</body>
+</html>

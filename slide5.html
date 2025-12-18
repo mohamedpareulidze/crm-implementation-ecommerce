@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Slide 5 — Why a CRM Is Needed</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    /* ==========================================================
+       RESET
+       ========================================================== */
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; }
+
+    body{
+      font-family:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      background:#0b1220; /* preview only */
+      overflow:hidden;
+    }
+
+    /* ==========================================================
+       TOKENS
+       ========================================================== */
+    :root{
+      --navy:#0B1F3A;
+      --ink:#0A1831;
+      --white:#FFFFFF;
+
+      --soft:#EAF0F8;
+      --muted:#6B7280;
+      --accent:#1F6AE1;
+
+      --stroke:rgba(11,31,58,.14);
+      --stroke2:rgba(11,31,58,.10);
+
+      --shadow:0 22px 60px rgba(2, 6, 23, 0.16);
+      --shadow2:0 18px 44px rgba(2, 6, 23, 0.12);
+
+      --radius-xl:22px;
+      --radius-lg:18px;
+      --radius-md:14px;
+
+      --t-med:240ms;
+    }
+
+    /* ==========================================================
+       SLIDE
+       ========================================================== */
+    .slide{
+      width:100vw;
+      height:100vh;
+      background:var(--white);
+      position:relative;
+      overflow:hidden;
+      isolation:isolate;
+    }
+
+    /* ✅ CLEAN BACKGROUND: ONLY subtle gradients (no spiral, no hub art) */
+    .bg{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      background:
+        radial-gradient(circle at 12% 14%, rgba(31,106,225,.08), rgba(31,106,225,0) 55%),
+        radial-gradient(circle at 88% 20%, rgba(11,31,58,.06), rgba(11,31,58,0) 60%);
+    }
+
+    /* ==========================================================
+       SCALE WRAPPER (same as slide 2/3)
+       ========================================================== */
+    .scale{
+      transform:scale(1.15);
+      transform-origin:top left;
+      width:86.96%;
+      height:86.96%;
+      position:relative;
+      z-index:2;
+    }
+
+    .wrap{
+      height:100%;
+      padding:56px 78px 54px 78px;
+      display:grid;
+      grid-template-rows:auto auto 1fr auto;
+      gap:18px;
+      position:relative;
+    }
+
+    /* ==========================================================
+       HEADER
+       ========================================================== */
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:18px;
+    }
+
+    .crumb{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      min-width:420px;
+    }
+
+    .kicker{
+      font-size:11px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--muted);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .dot{
+      width:9px;
+      height:9px;
+      border-radius:999px;
+      background:var(--accent);
+      box-shadow:0 0 0 6px rgba(31,106,225,.10);
+      flex:0 0 9px;
+    }
+
+    .title{
+      font-family:"Playfair Display", serif;
+      font-size:28px;
+      color:var(--ink);
+      letter-spacing:-.01em;
+    }
+
+    .meta{
+      font-size:12px;
+      color:var(--muted);
+      text-align:right;
+      line-height:1.35;
+      white-space:nowrap;
+      padding-top:2px;
+    }
+    .meta b{
+      color:rgba(11,31,58,.88);
+      font-weight:800;
+    }
+
+    /* ==========================================================
+       LEAD LINE (minimal)
+       ========================================================== */
+    .lead{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:18px;
+    }
+
+    .leadText{
+      max-width:1000px;
+      font-size:18px;
+      line-height:1.50;
+      color:rgba(11,31,58,.78);
+    }
+    .leadText b{
+      color:var(--ink);
+      font-weight:800;
+    }
+
+    /* Small “pill” (quiet) */
+    .miniPill{
+      align-self:center;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(234,240,248,.55);
+      color:rgba(11,31,58,.72);
+      font-size:12px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      font-weight:800;
+      white-space:nowrap;
+    }
+
+    .miniPill .arr{
+      width:18px; height:18px;
+      display:grid;
+      place-items:center;
+      border-radius:999px;
+      background:#fff;
+      border:1px solid rgba(11,31,58,.12);
+    }
+    .miniPill .arr svg{
+      width:10px; height:10px;
+      stroke:var(--navy);
+      stroke-width:2;
+      fill:none;
+      opacity:.85;
+    }
+
+    /* ==========================================================
+       MAIN — NEW BLOCK TYPE (NOT cards)
+       Use “pillars” with a left accent bar + icon badge
+       Still 2×2 grid
+       ========================================================== */
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+      align-content:start;
+      position:relative;
+    }
+
+    .pillar{
+      position:relative;
+      border:1px solid var(--stroke);
+      border-radius:var(--radius-xl);
+      background:rgba(255,255,255,.86);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      padding:18px 18px 16px 18px;
+      min-height:170px;
+      transition: transform var(--t-med) ease, box-shadow var(--t-med) ease;
+    }
+
+    /* Left accent bar (minimal consulting accent) */
+    .pillar::before{
+      content:"";
+      position:absolute;
+      left:0; top:0; bottom:0;
+      width:6px;
+      background:linear-gradient(180deg, rgba(11,31,58,.95), rgba(31,106,225,.65));
+      opacity:.95;
+    }
+
+    /* Top soft wash */
+    .pillar::after{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(31,106,225,.06), transparent 45%),
+        radial-gradient(circle at 70% 60%, rgba(11,31,58,.04), transparent 50%);
+      transform:rotate(12deg);
+      pointer-events:none;
+      opacity:.55;
+    }
+
+    .pillar:hover{
+      transform: translateY(-2px);
+      box-shadow:var(--shadow2);
+    }
+
+    .pHead{
+      position:relative;
+      z-index:2;
+      display:flex;
+      align-items:flex-start;
+      gap:14px;
+      padding-left:6px; /* align with accent bar */
+    }
+
+    /* NEW icon style: circular badge + outline icon */
+    .badge{
+      width:46px;
+      height:46px;
+      border-radius:999px;
+      background:var(--soft);
+      border:1px solid rgba(11,31,58,.12);
+      display:grid;
+      place-items:center;
+      flex:0 0 46px;
+      margin-top:2px;
+      box-shadow:0 10px 22px rgba(2,6,23,.06);
+    }
+
+    .badge svg{
+      width:22px;
+      height:22px;
+      stroke:var(--navy);
+      stroke-width:1.8;
+      fill:none;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+      opacity:.95;
+    }
+
+    .pTitle{
+      font-size:15px;
+      font-weight:900;
+      color:var(--navy);
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      margin-top:6px;
+    }
+
+    .pText{
+      position:relative;
+      z-index:2;
+      margin-top:10px;
+      padding-left:6px;
+      font-size:15.5px;
+      color:rgba(11,31,58,.72);
+      line-height:1.45;
+      max-width:520px;
+    }
+
+    .miniList{
+      position:relative;
+      z-index:2;
+      margin-top:10px;
+      padding-left:6px;
+      display:grid;
+      gap:7px;
+    }
+
+    .miniItem{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      font-size:13.5px;
+      color:rgba(11,31,58,.68);
+      line-height:1.35;
+    }
+
+    .dotMini{
+      width:8px;
+      height:8px;
+      border-radius:999px;
+      background:rgba(11,31,58,.42);
+      margin-top:6px;
+      flex:0 0 8px;
+    }
+
+    /* ==========================================================
+       FOOTER
+       ========================================================== */
+    .bottom{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:12px;
+      color:var(--muted);
+      border-top:1px solid rgba(11,31,58,.10);
+      padding-top:14px;
+      gap:18px;
+    }
+
+    .takeaway b{
+      color:rgba(11,31,58,.88);
+      font-weight:800;
+    }
+
+    /* ==========================================================
+       ANIMATION
+       ========================================================== */
+    @keyframes rise{
+      from{ opacity:0; transform:translateY(12px); }
+      to{ opacity:1; transform:translateY(0); }
+    }
+    .crumb, .meta{ animation:rise .7s ease-out both; }
+    .lead{ animation:rise .8s ease-out .06s both; }
+    .grid{ animation:rise .85s ease-out .10s both; }
+
+    @media print{
+      body{ background:#fff; }
+      .slide{ box-shadow:none; }
+      .pillar:hover{ transform:none; box-shadow:var(--shadow); }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="slide">
+    <div class="bg"></div>
+
+    <div class="scale">
+      <div class="wrap">
+
+        <!-- HEADER -->
+        <header class="top">
+          <div class="crumb">
+            <div class="kicker"><span class="dot"></span>Solution Rationale</div>
+            <div class="title">Why a CRM Is Needed</div>
+          </div>
+          <div class="meta">
+            <div><b>CRM Implementation</b></div>
+            <div>Slide 5</div>
+          </div>
+        </header>
+
+        <!-- LEAD -->
+        <section class="lead">
+          <div class="leadText">
+            A CRM is required to move from a fragmented setup to a <b>consistent, data-driven</b> customer approach supported by four pillars.
+          </div>
+
+          <div class="miniPill" aria-hidden="true">
+            Four pillars
+            <span class="arr">
+              <svg viewBox="0 0 24 24">
+                <path d="M8 12h8"/>
+                <path d="M13 7l5 5-5 5"/>
+              </svg>
+            </span>
+          </div>
+        </section>
+
+        <!-- MAIN: 2×2 pillars -->
+        <section class="grid" aria-label="Why CRM: four pillars">
+
+          <!-- Centralization -->
+          <article class="pillar">
+            <div class="pHead">
+              <div class="badge" aria-hidden="true">
+                <!-- hub / nodes -->
+                <svg viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="2.2"/>
+                  <circle cx="6" cy="7" r="2.1"/>
+                  <circle cx="18" cy="7" r="2.1"/>
+                  <circle cx="6" cy="17" r="2.1"/>
+                  <circle cx="18" cy="17" r="2.1"/>
+                  <path d="M10.2 11.2 7.6 8.6M13.8 11.2l2.6-2.6M10.2 12.8 7.6 15.4M13.8 12.8l2.6 2.6"/>
+                </svg>
+              </div>
+              <div class="pTitle">Centralization</div>
+            </div>
+
+            <div class="pText">
+              Create a unified customer view by consolidating profiles, purchases, and interactions in one place.
+            </div>
+
+            <div class="miniList">
+              <div class="miniItem"><span class="dotMini"></span><span>Single source of truth</span></div>
+              <div class="miniItem"><span class="dotMini"></span><span>Shared context across teams</span></div>
+            </div>
+          </article>
+
+          <!-- Personalization -->
+          <article class="pillar">
+            <div class="pHead">
+              <div class="badge" aria-hidden="true">
+                <!-- wand / spark -->
+                <svg viewBox="0 0 24 24">
+                  <path d="M4 20l10-10"/>
+                  <path d="M9 5l2 2"/>
+                  <path d="M7 7l2 2"/>
+                  <path d="M14 4l.8 2.2L17 7l-2.2.8L14 10l-.8-2.2L11 7l2.2-.8L14 4Z"/>
+                  <path d="M16 12l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6.6-1.6Z"/>
+                </svg>
+              </div>
+              <div class="pTitle">Personalization</div>
+            </div>
+
+            <div class="pText">
+              Enable segmentation and behavior-based messaging to deliver relevant campaigns at each lifecycle stage.
+            </div>
+
+            <div class="miniList">
+              <div class="miniItem"><span class="dotMini"></span><span>Smarter targeting</span></div>
+              <div class="miniItem"><span class="dotMini"></span><span>Higher engagement & retention</span></div>
+            </div>
+          </article>
+
+          <!-- Efficiency -->
+          <article class="pillar">
+            <div class="pHead">
+              <div class="badge" aria-hidden="true">
+                <!-- automation / loop -->
+                <svg viewBox="0 0 24 24">
+                  <path d="M20 12a8 8 0 0 1-14.8 4.3"/>
+                  <path d="M4 12a8 8 0 0 1 14.8-4.3"/>
+                  <path d="M6 18v-3h3"/>
+                  <path d="M18 6v3h-3"/>
+                </svg>
+              </div>
+              <div class="pTitle">Efficiency</div>
+            </div>
+
+            <div class="pText">
+              Reduce manual exports and rework; improve support performance with instant access to customer context.
+            </div>
+
+            <div class="miniList">
+              <div class="miniItem"><span class="dotMini"></span><span>Less manual work, fewer errors</span></div>
+              <div class="miniItem"><span class="dotMini"></span><span>Faster, more consistent responses</span></div>
+            </div>
+          </article>
+
+          <!-- Scalability -->
+          <article class="pillar">
+            <div class="pHead">
+              <div class="badge" aria-hidden="true">
+                <!-- growth / bars -->
+                <svg viewBox="0 0 24 24">
+                  <path d="M5 19V5"/>
+                  <path d="M5 19h14"/>
+                  <path d="M8 17v-5"/>
+                  <path d="M12 17v-8"/>
+                  <path d="M16 17v-11"/>
+                  <path d="M15 6h4v4"/>
+                  <path d="M19 6l-6 6-2-2-3 3"/>
+                </svg>
+              </div>
+              <div class="pTitle">Scalability</div>
+            </div>
+
+            <div class="pText">
+              Support growth with standardized processes and reliable data foundations that handle higher customer volumes.
+            </div>
+
+            <div class="miniList">
+              <div class="miniItem"><span class="dotMini"></span><span>Repeatable workflows</span></div>
+              <div class="miniItem"><span class="dotMini"></span><span>Scales without chaos</span></div>
+            </div>
+          </article>
+
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="bottom">
+          <div class="takeaway">
+            <b>Takeaway:</b> A CRM provides the structure needed to centralize, personalize, operate efficiently, and scale.
+          </div>
+          <div>Rationale</div>
+        </footer>
+
+      </div>
+    </div>
+  </div>
+</body>
+</html>

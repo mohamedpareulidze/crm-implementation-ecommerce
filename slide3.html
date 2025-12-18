@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Slide 3 — Current Situation (As-Is)</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; }
+
+    body{
+      font-family:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      background:#0b1220; /* preview only */
+      overflow:hidden;
+    }
+
+    :root{
+      --navy:#0B1F3A;
+      --ink:#0A1831;
+      --white:#ffffff;
+      --muted:#6B7280;
+      --soft:#EAF0F8;
+      --stroke:rgba(11,31,58,.14);
+      --accent:#1F6AE1;
+      --shadow:0 22px 60px rgba(2, 6, 23, 0.16);
+      --shadow2:0 28px 70px rgba(2, 6, 23, 0.18);
+      --danger:#B42318;
+    }
+
+    .slide{
+      width:100vw;
+      height:100vh;
+      background:var(--white);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .bg{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 12% 14%, rgba(31,106,225,.10), rgba(31,106,225,0) 55%),
+        radial-gradient(circle at 88% 20%, rgba(11,31,58,.08), rgba(11,31,58,0) 60%);
+    }
+
+    /* 🔑 SCALE WRAPPER */
+    .scale{
+      transform:scale(1.15);
+      transform-origin:top left;
+      width:86.96%;
+      height:86.96%;
+    }
+
+    .wrap{
+      height:100%;
+      padding:56px 78px 54px 78px;
+      display:grid;
+      grid-template-rows:auto 1fr auto;
+      gap:20px;
+      position:relative;
+      z-index:2;
+    }
+
+    /* HEADER */
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+    }
+
+    .crumb{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    .kicker{
+      font-size:11px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--muted);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .dot{
+      width:9px;
+      height:9px;
+      border-radius:999px;
+      background:var(--accent);
+      box-shadow:0 0 0 6px rgba(31,106,225,.10);
+    }
+
+    .title{
+      font-family:"Playfair Display", serif;
+      font-size:28px;
+      color:var(--ink);
+    }
+
+    .meta{
+      font-size:12px;
+      color:var(--muted);
+      text-align:right;
+    }
+
+    /* GRID */
+    .grid{
+      display:grid;
+      grid-template-columns:1.05fr .95fr;
+      gap:28px;
+    }
+
+    /* LEFT PANEL */
+    .panel{
+      background:rgba(255,255,255,.75);
+      border:1px solid var(--stroke);
+      border-radius:18px;
+      padding:22px;
+      box-shadow:var(--shadow);
+    }
+
+    .headline{
+      font-size:12px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--muted);
+      margin-bottom:12px;
+      font-weight:800;
+    }
+
+    .big{
+      font-size:24px;
+      line-height:1.25;
+      font-weight:600;
+      margin-bottom:16px;
+      color:var(--ink);
+    }
+
+    .bullets{
+      display:grid;
+      gap:10px;
+    }
+
+    .bullet{
+      display:flex;
+      gap:12px;
+      padding:12px;
+      border-radius:14px;
+      background:rgba(234,240,248,.40);
+      border:1px solid rgba(11,31,58,.10);
+      align-items:flex-start;
+    }
+
+    .ico{
+      width:36px;
+      height:36px;
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      background:#fff;
+      border:1px solid rgba(11,31,58,.10);
+      flex:0 0 36px;
+    }
+
+    .ico svg{ width:18px; height:18px; }
+
+    .k{
+      font-size:14px;
+      font-weight:800;
+      margin-bottom:4px;
+      color:var(--ink);
+    }
+
+    .p{
+      font-size:13.5px;
+      color:rgba(11,31,58,.72);
+      line-height:1.45;
+    }
+
+    /* RIGHT: CLEAR FLOW DIAGRAM */
+    .viz{
+      background:linear-gradient(135deg, rgba(11,31,58,.92), rgba(31,106,225,.88));
+      border-radius:18px;
+      padding:18px;
+      color:#fff;
+      box-shadow:var(--shadow2);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .vizTitle{
+      font-size:12px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      opacity:.82;
+      margin-bottom:14px;
+      font-weight:800;
+    }
+
+    .flow{
+      display:grid;
+      gap:12px;
+      align-content:start;
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns: 1fr 74px 1fr;
+      gap:12px;
+      align-items:center;
+    }
+
+    .box{
+      border-radius:18px;
+      padding:14px 14px 12px 14px;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.22);
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      min-height:84px;
+    }
+
+    .bIcon{
+      width:36px;
+      height:36px;
+      border-radius:12px;
+      background:rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.20);
+      display:grid;
+      place-items:center;
+      flex:0 0 36px;
+      margin-top:1px;
+    }
+
+    .bIcon svg{ width:18px; height:18px; stroke:#fff; stroke-width:1.6; fill:none; opacity:.95; }
+
+    .bTitle{
+      font-weight:900;
+      font-size:13px;
+      letter-spacing:.02em;
+      line-height:1.1;
+      margin-bottom:5px;
+    }
+
+    .bDesc{
+      font-size:12px;
+      opacity:.86;
+      line-height:1.35;
+    }
+
+    /* arrow column */
+    .arrowCol{
+      height:100%;
+      display:grid;
+      place-items:center;
+      opacity:.95;
+    }
+
+    .arrow{
+      width:58px;
+      height:58px;
+      border-radius:18px;
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.20);
+      display:grid;
+      place-items:center;
+    }
+
+    .arrow svg{ width:22px; height:22px; stroke:#fff; stroke-width:1.8; fill:none; }
+
+    /* bottom: missing hub */
+    .noHub{
+      margin-top:10px;
+      border-radius:18px;
+      padding:14px 16px;
+      background:rgba(180,35,24,.18);
+      border:1px solid rgba(255,255,255,.22);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .noHubLeft{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .xmark{
+      width:28px;
+      height:28px;
+      border-radius:10px;
+      background:rgba(180,35,24,.92);
+      box-shadow:0 0 0 6px rgba(180,35,24,.14);
+      display:grid;
+      place-items:center;
+      flex:0 0 28px;
+    }
+    .xmark svg{ width:14px; height:14px; stroke:#fff; stroke-width:2.2; fill:none; }
+
+    .noHub strong{ font-size:13px; letter-spacing:.10em; text-transform:uppercase; }
+    .noHub span{ font-size:12px; opacity:.88; }
+
+    /* FOOTER — NO DOTS */
+    .bottom{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:12px;
+      color:var(--muted);
+      border-top:1px solid rgba(11,31,58,.10);
+      padding-top:14px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="slide">
+    <div class="bg"></div>
+
+    <div class="scale">
+      <div class="wrap">
+
+        <!-- HEADER -->
+        <header class="top">
+          <div class="crumb">
+            <div class="kicker"><span class="dot"></span>Current Situation</div>
+            <div class="title">Current Customer Management (As-Is)</div>
+          </div>
+          <div class="meta">
+            <div><b>CRM Implementation</b></div>
+            <div>Slide 3</div>
+          </div>
+        </header>
+
+        <!-- MAIN -->
+        <section class="grid">
+          <!-- LEFT: bullets -->
+          <article class="panel">
+            <div class="headline">What we observe today</div>
+            <div class="big">
+              Customer information is spread across multiple tools that <b>do not communicate</b>.
+            </div>
+
+            <div class="bullets">
+              <div class="bullet">
+                <div class="ico" aria-hidden="true">
+                  <!-- disconnected -->
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8 8h3v3H8V8Z" stroke="var(--navy)" stroke-width="1.6"/>
+                    <path d="M13 13h3v3h-3v-3Z" stroke="var(--navy)" stroke-width="1.6"/>
+                    <path d="M11 10l2 2" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round"/>
+                    <path d="M10 13l-2 2" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div>
+                  <div class="k">Multiple disconnected tools</div>
+                  <div class="p">Each function works with its own platform and dataset.</div>
+                </div>
+              </div>
+
+              <div class="bullet">
+                <div class="ico" aria-hidden="true">
+                  <!-- database missing -->
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <ellipse cx="12" cy="5" rx="7" ry="3" stroke="var(--navy)" stroke-width="1.6"/>
+                    <path d="M5 5v7c0 1.7 3.1 3 7 3s7-1.3 7-3V5" stroke="var(--accent)" stroke-width="1.6"/>
+                    <path d="M8.5 18.5l7-7" stroke="var(--navy)" stroke-width="1.6" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div>
+                  <div class="k">No centralized customer data</div>
+                  <div class="p">Data is duplicated and hard to consolidate.</div>
+                </div>
+              </div>
+
+              <div class="bullet">
+                <div class="ico" aria-hidden="true">
+                  <!-- no 360 view -->
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 4a8 8 0 1 0 8 8" stroke="var(--navy)" stroke-width="1.6" stroke-linecap="round"/>
+                    <path d="M20 12l-2.5-2.5" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round"/>
+                    <path d="M9 12h6" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div>
+                  <div class="k">No unified customer view</div>
+                  <div class="p">Teams lack context to personalize and respond consistently.</div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- RIGHT: CLEAR SYSTEM FLOW -->
+          <aside class="viz" aria-label="System fragmentation diagram">
+            <div class="vizTitle">System fragmentation (As-Is)</div>
+
+            <div class="flow">
+              <!-- Row 1 -->
+              <div class="row">
+                <div class="box">
+                  <div class="bIcon" aria-hidden="true">
+                    <!-- website -->
+                    <svg viewBox="0 0 24 24">
+                      <path d="M4 6h16v12H4V6Z"/>
+                      <path d="M4 10h16"/>
+                      <path d="M8 14h4"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="bTitle">Website</div>
+                    <div class="bDesc">Browsing, carts, purchases</div>
+                  </div>
+                </div>
+
+                <div class="arrowCol" aria-hidden="true">
+                  <div class="arrow">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M6 12h10" />
+                      <path d="M13 7l5 5-5 5" />
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="box">
+                  <div class="bIcon" aria-hidden="true">
+                    <!-- email -->
+                    <svg viewBox="0 0 24 24">
+                      <path d="M4 7h16v10H4V7Z"/>
+                      <path d="M4 8l8 6 8-6"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="bTitle">Email tool</div>
+                    <div class="bDesc">Lists, campaigns, engagement</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Row 2 -->
+              <div class="row">
+                <div class="box">
+                  <div class="bIcon" aria-hidden="true">
+                    <!-- support -->
+                    <svg viewBox="0 0 24 24">
+                      <path d="M4 12a8 8 0 0 1 16 0"/>
+                      <path d="M6 12v4a2 2 0 0 0 2 2h1"/>
+                      <path d="M18 12v4a2 2 0 0 1-2 2h-1"/>
+                      <path d="M10 20h4"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="bTitle">Support tool</div>
+                    <div class="bDesc">Tickets, issues, history</div>
+                  </div>
+                </div>
+
+                <div class="arrowCol" aria-hidden="true">
+                  <div class="arrow">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M6 12h10" />
+                      <path d="M13 7l5 5-5 5" />
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="box">
+                  <div class="bIcon" aria-hidden="true">
+                    <!-- excel -->
+                    <svg viewBox="0 0 24 24">
+                      <path d="M5 6h14v12H5V6Z"/>
+                      <path d="M5 10h14M5 14h14"/>
+                      <path d="M10 6v12M14 6v12"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="bTitle">Excel</div>
+                    <div class="bDesc">Manual exports & tracking</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Missing hub -->
+              <div class="noHub">
+                <div class="noHubLeft">
+                  <div class="xmark" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M6 6l12 12M18 6L6 18" />
+                    </svg>
+                  </div>
+                  <div>
+                    <strong>No Central Hub</strong><br/>
+                    <span>Customer data is not unified → inconsistent engagement.</span>
+                  </div>
+                </div>
+                <span style="font-size:12px; opacity:.85; white-space:nowrap;">
+                  “No single source of truth”
+                </span>
+              </div>
+            </div>
+          </aside>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="bottom">
+          <div><b>Takeaway:</b> Fragmented tools prevent a consistent customer experience.</div>
+          <div>As-Is</div>
+        </footer>
+
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Slide 8 — CRM Solutions Considered</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; }
+
+    body{
+      font-family:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      background:#0b1220;
+      overflow:hidden;
+    }
+
+    :root{
+      --navy:#0B1F3A;
+      --ink:#0A1831;
+      --white:#FFFFFF;
+      --soft:#EAF0F8;
+      --muted:#6B7280;
+      --accent:#1F6AE1;
+      --stroke:rgba(11,31,58,.14);
+      --shadow:0 18px 44px rgba(2, 6, 23, 0.12);
+      --shadow2:0 12px 30px rgba(2, 6, 23, 0.09);
+      --radius-xl:22px;
+      --radius-lg:18px;
+    }
+
+    .slide{
+      width:100vw;
+      height:100vh;
+      background:var(--white);
+      position:relative;
+      overflow:hidden;
+      isolation:isolate;
+    }
+
+    .bg{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      background:
+        radial-gradient(circle at 12% 14%, rgba(31,106,225,.08), rgba(31,106,225,0) 55%),
+        radial-gradient(circle at 88% 20%, rgba(11,31,58,.06), rgba(11,31,58,0) 60%);
+    }
+
+    /* No scaling => no cropping on short screens */
+    .scale{
+      transform:scale(1);
+      transform-origin:top left;
+      width:100%;
+      height:100%;
+      position:relative;
+      z-index:2;
+    }
+
+    .wrap{
+      height:100%;
+      padding:44px 64px 40px 64px;
+      display:grid;
+      grid-template-rows:auto auto 1fr auto;
+      gap:12px;
+    }
+
+    /* Header */
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:18px;
+    }
+
+    .crumb{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      min-width:420px;
+    }
+
+    .kicker{
+      font-size:11px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--muted);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .dot{
+      width:9px;
+      height:9px;
+      border-radius:999px;
+      background:var(--accent);
+      box-shadow:0 0 0 6px rgba(31,106,225,.10);
+      flex:0 0 9px;
+    }
+
+    .title{
+      font-family:"Playfair Display", serif;
+      font-size:28px;
+      color:var(--ink);
+      letter-spacing:-.01em;
+    }
+
+    .meta{
+      font-size:12px;
+      color:var(--muted);
+      text-align:right;
+      line-height:1.35;
+      white-space:nowrap;
+      padding-top:2px;
+    }
+    .meta b{
+      color:rgba(11,31,58,.88);
+      font-weight:800;
+    }
+
+    /* Lead line */
+    .lead{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+    }
+
+    .leadText{
+      max-width:980px;
+      font-size:16.5px;
+      line-height:1.45;
+      color:rgba(11,31,58,.78);
+    }
+    .leadText b{ color:var(--ink); font-weight:800; }
+
+    .miniPill{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:9px 11px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(234,240,248,.55);
+      color:rgba(11,31,58,.72);
+      font-size:11px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      font-weight:800;
+      white-space:nowrap;
+      box-shadow:0 10px 20px rgba(2,6,23,.05);
+    }
+
+    .miniPill .cDot{
+      width:7px; height:7px;
+      border-radius:999px;
+      background:rgba(11,31,58,.35);
+    }
+
+    /* Main panel */
+    .panel{
+      border:1px solid var(--stroke);
+      border-radius:var(--radius-xl);
+      background:rgba(255,255,255,.92);
+      box-shadow:var(--shadow);
+      padding:16px 18px 14px 18px;
+      position:relative;
+      overflow:hidden;
+      min-height:0;
+    }
+
+    .panel::before{
+      content:"";
+      position:absolute;
+      left:0; top:0; bottom:0;
+      width:6px;
+      background:linear-gradient(180deg, rgba(11,31,58,.95), rgba(31,106,225,.65));
+      opacity:.95;
+    }
+
+    .panel::after{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background:
+        radial-gradient(circle at 26% 24%, rgba(31,106,225,.07), transparent 45%),
+        radial-gradient(circle at 78% 60%, rgba(11,31,58,.05), transparent 52%);
+      transform:rotate(10deg);
+      opacity:.48;
+      pointer-events:none;
+    }
+
+    .panelHead{
+      position:relative;
+      z-index:2;
+      margin-left:6px;
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom:10px;
+    }
+
+    .panelHead .h{
+      font-size:11px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--muted);
+      font-weight:900;
+    }
+
+    .neutralTag{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:9px 11px;
+      border-radius:999px;
+      background:rgba(234,240,248,.60);
+      border:1px solid rgba(11,31,58,.12);
+      color:rgba(11,31,58,.66);
+      font-size:11.5px;
+      white-space:nowrap;
+      box-shadow:0 10px 20px rgba(2,6,23,.05);
+    }
+
+    .neutralTag b{
+      color:rgba(11,31,58,.78);
+      font-weight:900;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      font-size:11px;
+    }
+
+    /* 4 equal cards */
+    .grid{
+      position:relative;
+      z-index:2;
+      margin-left:6px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      min-height:0;
+    }
+
+    .card{
+      position:relative;
+      border:1px solid rgba(11,31,58,.12);
+      border-radius:20px;
+      background:var(--soft);
+      box-shadow:var(--shadow2);
+      padding:14px 14px 12px 14px;
+      overflow:hidden;
+
+      display:grid;
+      grid-template-rows:auto auto 1fr;
+      gap:10px;
+
+      /* equal height feel */
+      min-height:190px;
+    }
+
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(31,106,225,.10), transparent 45%),
+        radial-gradient(circle at 80% 70%, rgba(11,31,58,.06), transparent 52%);
+      opacity:.40;
+      pointer-events:none;
+    }
+
+    /* Greyed "logo" block */
+    .logo{
+      position:relative;
+      z-index:2;
+      border:1px solid rgba(11,31,58,.12);
+      background:rgba(255,255,255,.78);
+      border-radius:16px;
+      padding:12px 12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      box-shadow:0 10px 18px rgba(2,6,23,.05);
+    }
+
+    .logoMark{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+
+    .markIcon{
+      width:34px;
+      height:34px;
+      border-radius:12px;
+      border:1px solid rgba(11,31,58,.12);
+      background:rgba(234,240,248,.70);
+      display:grid;
+      place-items:center;
+      flex:0 0 34px;
+    }
+
+    .markIcon svg{
+      width:18px; height:18px;
+      stroke:rgba(11,31,58,.65);
+      stroke-width:2;
+      fill:none;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+    }
+
+    .logoName{
+      font-size:14px;
+      font-weight:900;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      color:rgba(11,31,58,.72);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .logoHint{
+      font-size:11px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:rgba(107,114,128,.90);
+      font-weight:800;
+      white-space:nowrap;
+    }
+
+    .cardTitle{
+      position:relative;
+      z-index:2;
+      font-size:13px;
+      font-weight:900;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:var(--navy);
+      padding-left:2px;
+    }
+
+    .cardText{
+      position:relative;
+      z-index:2;
+      font-size:14.2px;
+      color:rgba(11,31,58,.72);
+      line-height:1.40;
+      padding-left:2px;
+      padding-right:54px; /* room for arrow */
+    }
+
+    /* right arrow inside each card */
+    .arrow{
+      position:absolute;
+      top:50%;
+      right:12px;
+      transform:translateY(-50%);
+      width:36px;
+      height:36px;
+      border-radius:14px;
+      background:rgba(255,255,255,.82);
+      border:1px solid rgba(11,31,58,.12);
+      display:grid;
+      place-items:center;
+      z-index:3;
+      box-shadow:0 10px 18px rgba(2,6,23,.05);
+      opacity:.92;
+    }
+
+    .arrow svg{
+      width:16px;
+      height:16px;
+      stroke:var(--navy);
+      stroke-width:2;
+      fill:none;
+      opacity:.85;
+    }
+
+    /* Footer */
+    .bottom{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:12px;
+      color:var(--muted);
+      border-top:1px solid rgba(11,31,58,.10);
+      padding-top:12px;
+      gap:18px;
+    }
+
+    @keyframes rise{
+      from{ opacity:0; transform:translateY(10px); }
+      to{ opacity:1; transform:translateY(0); }
+    }
+    .crumb, .meta{ animation:rise .65s ease-out both; }
+    .lead{ animation:rise .72s ease-out .05s both; }
+    .panel{ animation:rise .78s ease-out .08s both; }
+
+    @media (max-height:760px){
+      .wrap{ padding:40px 56px 36px 56px; gap:10px; }
+      .title{ font-size:26px; }
+      .leadText{ font-size:16px; }
+      .card{ min-height:180px; }
+      .cardText{ font-size:13.8px; }
+    }
+
+    @media print{
+      body{ background:#fff; }
+      .slide{ box-shadow:none; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="slide">
+    <div class="bg"></div>
+
+    <div class="scale">
+      <div class="wrap">
+
+        <header class="top">
+          <div class="crumb">
+            <div class="kicker"><span class="dot"></span>Methodology</div>
+            <div class="title">CRM Solutions Considered</div>
+          </div>
+          <div class="meta">
+            <div><b>CRM Implementation</b></div>
+            <div>Slide 8</div>
+          </div>
+        </header>
+
+        <section class="lead">
+          <div class="leadText">
+            To avoid bias, we evaluated <b>four different market approaches</b> before selecting the most
+            suitable CRM for a retail e-commerce context.
+          </div>
+          <div class="miniPill" aria-hidden="true">
+            <span class="cDot"></span>Neutral comparison
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panelHead">
+            <div class="h">Short list — high-level overview</div>
+            <div class="neutralTag"><b>4 tools</b> enterprise • SMB • value • e-commerce</div>
+          </div>
+
+          <div class="grid" aria-label="CRM tools considered">
+
+            <!-- Salesforce -->
+            <article class="card">
+              <div class="logo" aria-hidden="true">
+                <div class="logoMark">
+                  <div class="markIcon">
+                    <!-- cloud -->
+                    <svg viewBox="0 0 24 24">
+                      <path d="M7.5 18h10a3.5 3.5 0 0 0 .3-7 5 5 0 0 0-9.6-1.6A3.8 3.8 0 0 0 7.5 18Z"/>
+                    </svg>
+                  </div>
+                  <div class="logoName">Salesforce</div>
+                </div>
+                <div class="logoHint">Enterprise</div>
+              </div>
+
+              <div class="cardTitle">Salesforce</div>
+              <div class="cardText">
+                Powerful and very complete enterprise CRM, but often <b>complex</b> and <b>costly</b> to deploy and operate.
+              </div>
+
+              <div class="arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M8 12h8"/><path d="M13 7l5 5-5 5"/></svg>
+              </div>
+            </article>
+
+            <!-- HubSpot -->
+            <article class="card">
+              <div class="logo" aria-hidden="true">
+                <div class="logoMark">
+                  <div class="markIcon">
+                    <!-- nodes -->
+                    <svg viewBox="0 0 24 24">
+                      <circle cx="7" cy="12" r="2"/>
+                      <circle cx="17" cy="7" r="2"/>
+                      <circle cx="17" cy="17" r="2"/>
+                      <path d="M9 12h6M16 8l-4 3M16 16l-4-3"/>
+                    </svg>
+                  </div>
+                  <div class="logoName">HubSpot CRM</div>
+                </div>
+                <div class="logoHint">User-friendly</div>
+              </div>
+
+              <div class="cardTitle">HubSpot CRM</div>
+              <div class="cardText">
+                Well-known CRM with strong marketing features and a <b>user-friendly</b> experience, suitable for fast adoption.
+              </div>
+
+              <div class="arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M8 12h8"/><path d="M13 7l5 5-5 5"/></svg>
+              </div>
+            </article>
+
+            <!-- Zoho -->
+            <article class="card">
+              <div class="logo" aria-hidden="true">
+                <div class="logoMark">
+                  <div class="markIcon">
+                    <!-- wallet / value -->
+                    <svg viewBox="0 0 24 24">
+                      <path d="M4 8h16v10H4V8Z"/>
+                      <path d="M4 9.5c2.2-2.2 5.2-3.5 8.5-3.5H20"/>
+                      <path d="M16 13h4v3h-4a2 2 0 0 1 0-3Z"/>
+                    </svg>
+                  </div>
+                  <div class="logoName">Zoho CRM</div>
+                </div>
+                <div class="logoHint">Value</div>
+              </div>
+
+              <div class="cardTitle">Zoho CRM</div>
+              <div class="cardText">
+                Good <b>value for money</b>, flexible, and often easier to implement — a pragmatic option for smaller teams.
+              </div>
+
+              <div class="arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M8 12h8"/><path d="M13 7l5 5-5 5"/></svg>
+              </div>
+            </article>
+
+            <!-- Klaviyo -->
+            <article class="card">
+              <div class="logo" aria-hidden="true">
+                <div class="logoMark">
+                  <div class="markIcon">
+                    <!-- automation / loop -->
+                    <svg viewBox="0 0 24 24">
+                      <path d="M20 12a8 8 0 0 1-14.8 4.3"/>
+                      <path d="M4 12a8 8 0 0 1 14.8-4.3"/>
+                      <path d="M6 18v-3h3"/>
+                      <path d="M18 6v3h-3"/>
+                    </svg>
+                  </div>
+                  <div class="logoName">Klaviyo</div>
+                </div>
+                <div class="logoHint">E-commerce</div>
+              </div>
+
+              <div class="cardTitle">Klaviyo</div>
+              <div class="cardText">
+                E-commerce standard focused on <b>marketing automation</b> and <b>customer personalization</b> using behavior events.
+              </div>
+
+              <div class="arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M8 12h8"/><path d="M13 7l5 5-5 5"/></svg>
+              </div>
+            </article>
+
+          </div>
+        </section>
+
+        <footer class="bottom">
+          <div><b>Takeaway:</b> We compared four tools covering different approaches before selecting the best fit for retail e-commerce.</div>
+          <div>Method</div>
+        </footer>
+
+      </div>
+    </div>
+  </div>
+</body>
+</html>

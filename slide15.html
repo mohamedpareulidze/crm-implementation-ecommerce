@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Slide 15 — Conclusion</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; }
+    body{
+      font-family:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      overflow:hidden;
+      background:#0b1220; /* preview only */
+    }
+
+    :root{
+      --navy:#0B1F3A;
+      --navy-deep:#07162A;
+      --ink:#0A1831;
+      --white:#ffffff;
+      --muted:#6B7280;
+      --soft:#EAF0F8;
+      --stroke:rgba(11,31,58,.14);
+      --accent:#1F6AE1;
+      --shadow2:0 18px 44px rgba(2, 6, 23, 0.12);
+    }
+
+    /* FULL SCREEN canvas (no delimitation) */
+    .slide{
+      width:100vw;
+      height:100vh;
+      position:relative;
+      overflow:hidden;
+      background:var(--white);
+      color:var(--navy);
+      isolation:isolate;
+      display:flex;
+      flex-direction:column;
+    }
+
+    /* Slide 1 ribbon style */
+    .ribbon{
+      position:absolute;
+      left:0; top:0; bottom:0;
+      width:92px;
+      background:linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
+      box-shadow: 18px 0 40px rgba(2,6,23,.18);
+      z-index:2;
+    }
+    .ribbon::after{
+      content:"";
+      position:absolute;
+      top:84px;
+      left:24px;
+      width:44px;
+      height:3px;
+      border-radius:999px;
+      background:rgba(255,255,255,.88);
+      opacity:.9;
+    }
+
+    .bg{
+      position:absolute;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 16% 18%, rgba(31,106,225,.10), rgba(31,106,225,0) 56%),
+        radial-gradient(circle at 88% 26%, rgba(11,31,58,.08), rgba(11,31,58,0) 62%),
+        radial-gradient(circle at 72% 92%, rgba(31,106,225,.06), rgba(31,106,225,0) 60%);
+    }
+
+    /* Optional subtle icon */
+    .iconMark{
+      position:absolute;
+      right:70px;
+      top:150px;
+      width:66px;
+      height:66px;
+      border-radius:18px;
+      border:1px solid rgba(11,31,58,.12);
+      background:rgba(234,240,248,.55);
+      display:grid;
+      place-items:center;
+      box-shadow:var(--shadow2);
+      z-index:2;
+      opacity:.95;
+    }
+    .iconMark svg{
+      width:28px; height:28px;
+      stroke:var(--navy);
+      stroke-width:2;
+      fill:none;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+      opacity:.92;
+    }
+
+    /* Layout */
+    .wrap{
+      position:relative;
+      z-index:3;
+      flex-grow:1;
+      padding:64px 78px 56px 140px; /* ribbon space */
+      display:grid;
+      grid-template-rows:auto 1fr auto;
+      gap:24px;
+      height:100%;
+    }
+
+    .top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:20px;
+    }
+
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+
+    .brand .kicker{
+      font-size:11px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--muted);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .brand .kicker .dot{
+      width:9px; height:9px;
+      border-radius:999px;
+      background:var(--accent);
+      box-shadow:0 0 0 6px rgba(31,106,225,.10);
+    }
+
+    .brand .line{
+      width:56px;
+      height:1px;
+      background:linear-gradient(to right, rgba(11,31,58,.35), rgba(11,31,58,0));
+    }
+
+    .meta{
+      text-align:right;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.35;
+      white-space:nowrap;
+    }
+    .meta b{ color:rgba(11,31,58,.90); font-weight:700; }
+
+    .center{
+      display:grid;
+      align-content:center;
+      gap:18px;
+      max-width:980px;
+    }
+
+    h1{
+      font-family:"Playfair Display", serif;
+      font-size:56px;
+      line-height:1.03;
+      letter-spacing:-.01em;
+      color:var(--ink);
+    }
+
+    .sig{
+      width:110px;
+      height:3px;
+      border-radius:999px;
+      background:linear-gradient(90deg, var(--navy), rgba(11,31,58,.25));
+      opacity:.95;
+    }
+
+    .lines{
+      margin-top:2px;
+      display:grid;
+      gap:14px;
+      max-width:880px;
+    }
+
+    .lineItem{
+      display:flex;
+      align-items:flex-start;
+      gap:12px;
+      font-size:22px;
+      line-height:1.35;
+      color:rgba(11,31,58,.78);
+    }
+
+    .bullet{
+      width:10px;
+      height:10px;
+      margin-top:10px;
+      border-radius:999px;
+      background:var(--accent);
+      box-shadow:0 0 0 7px rgba(31,106,225,.10);
+      flex:0 0 10px;
+    }
+
+    .strong{ color:var(--ink); font-weight:600; }
+
+    .bottom{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:18px;
+      border-top:1px solid rgba(11,31,58,.10);
+      padding-top:16px;
+      color:rgba(11,31,58,.62);
+      font-size:12px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+    .bottom b{
+      color:rgba(11,31,58,.86);
+      font-weight:800;
+      letter-spacing:.10em;
+    }
+
+    /* Subtle animations */
+    @keyframes rise{
+      from{ opacity:0; transform:translateY(12px); }
+      to{ opacity:1; transform:translateY(0); }
+    }
+    .brand, .meta { animation: rise .7s ease-out both; }
+    .iconMark { animation: rise .75s ease-out .03s both; }
+    .center { animation: rise .8s ease-out .07s both; }
+    .bottom { animation: rise .8s ease-out .12s both; }
+
+    /* safety on shorter screens */
+    @media (max-height:760px){
+      .wrap{ padding:54px 66px 46px 130px; }
+      h1{ font-size:52px; }
+      .lineItem{ font-size:20px; }
+      .iconMark{ top:120px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="slide">
+    <div class="bg"></div>
+    <div class="ribbon" aria-hidden="true"></div>
+
+    <div class="iconMark" aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M22 11.1V12a10 10 0 1 1-5.93-9.14"/>
+        <path d="M22 4 12 14.01l-3-3"/>
+      </svg>
+    </div>
+
+    <div class="wrap">
+
+      <header class="top">
+        <div class="brand">
+          <div class="kicker"><span class="dot"></span><span>Final Conclusion</span></div>
+          <div class="line"></div>
+          <div style="font-size:12px; color:rgba(11,31,58,.78); letter-spacing:.06em;">
+            Retail E-commerce · Customer Engagement
+          </div>
+        </div>
+
+        <div class="meta">
+          <div><b>CRM Implementation</b></div>
+          <div>Closing Slide</div>
+        </div>
+      </header>
+
+      <main class="center">
+        <h1>Conclusion</h1>
+        <div class="sig"></div>
+
+        <div class="lines">
+          <div class="lineItem"><span class="bullet"></span><span><span class="strong">CRM</span> is a strategic asset for e-commerce.</span></div>
+          <div class="lineItem"><span class="bullet"></span><span><span class="strong">Klaviyo</span> perfectly fits engagement-driven needs.</span></div>
+          <div class="lineItem"><span class="bullet"></span><span>A <span class="strong">structured, low-risk</span> implementation ensures adoption and results.</span></div>
+        </div>
+      </main>
+
+      <footer class="bottom">
+        <div><b>Thank you</b> — Questions?</div>
+        <div>Slide 15</div>
+      </footer>
+
+    </div>
+  </div>
+</body>
+</html>

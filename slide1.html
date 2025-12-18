@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CRM Implementation — Title Slide</title>
+
+  <!-- Fonts (premium but different vibe) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    /* RESET */
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; }
+    body{
+      font-family:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      overflow:hidden;
+      background:#0b1220; /* preview only */
+    }
+
+    :root{
+      --navy:#0B1F3A;
+      --navy-deep:#07162A;
+      --ink:#0A1831;
+      --white:#ffffff;
+      --muted:#6B7280;
+      --soft:#EAF0F8;
+      --stroke:rgba(11,31,58,.14);
+      --accent:#1F6AE1;
+      --shadow:0 28px 70px rgba(2, 6, 23, 0.20);
+    }
+
+    /* 16:9 slide canvas */
+    .slide{
+      width:100vw;
+      height:100vh;
+      position:relative;
+      overflow:hidden;
+      background:var(--white);
+      color:var(--navy);
+      isolation:isolate;
+    }
+
+    /* A bold but clean vertical ribbon (different structure) */
+    .ribbon{
+      position:absolute;
+      left:0; top:0; bottom:0;
+      width:92px;
+      background:linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
+      box-shadow: 18px 0 40px rgba(2,6,23,.18);
+      z-index:2;
+    }
+    .ribbon::after{
+      content:"";
+      position:absolute;
+      top:84px;
+      left:24px;
+      width:44px;
+      height:3px;
+      border-radius:999px;
+      background:rgba(255,255,255,.88);
+      opacity:.9;
+    }
+
+    /* Subtle “paper engineering” background — not busy */
+    .bg{
+      position:absolute;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 14% 18%, rgba(31,106,225,.11), rgba(31,106,225,0) 56%),
+        radial-gradient(circle at 92% 30%, rgba(11,31,58,.10), rgba(11,31,58,0) 60%),
+        radial-gradient(circle at 70% 92%, rgba(31,106,225,.08), rgba(31,106,225,0) 58%);
+    }
+
+    /* A single elegant curve SVG anchored right (wow factor, still calm) */
+    .curve{
+      position:absolute;
+      right:-140px;
+      top:-120px;
+      width:820px;
+      height:820px;
+      z-index:1;
+      opacity:.95;
+      filter: drop-shadow(0 30px 70px rgba(2,6,23,.10));
+      pointer-events:none;
+    }
+
+    /* Main layout */
+    .wrap{
+      position:relative;
+      z-index:3;
+      height:100%;
+      padding:64px 78px 56px 140px; /* leave space for ribbon */
+      display:grid;
+      grid-template-rows:auto 1fr auto;
+    }
+
+    /* Header */
+    .top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:20px;
+    }
+
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+
+    .brand .kicker{
+      font-size:11px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--muted);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .brand .kicker .dot{
+      width:9px; height:9px;
+      border-radius:999px;
+      background:var(--accent);
+      box-shadow:0 0 0 6px rgba(31,106,225,.10);
+    }
+
+    .brand .line{
+      width:56px;
+      height:1px;
+      background:linear-gradient(to right, rgba(11,31,58,.35), rgba(11,31,58,0));
+    }
+
+    .meta{
+      text-align:right;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.35;
+      white-space:nowrap;
+    }
+    .meta b{ color:rgba(11,31,58,.90); font-weight:700; }
+
+    /* Center content: big title + statement + “scope chips” */
+    .center{
+      display:grid;
+      align-content:center;
+      gap:18px;
+      max-width:880px;
+    }
+
+    h1{
+      font-family:"Playfair Display", serif;
+      font-size:62px;
+      line-height:1.02;
+      letter-spacing:-.01em;
+      color:var(--ink);
+    }
+
+    .sub{
+      font-size:20px;
+      line-height:1.55;
+      color:rgba(11,31,58,.76);
+      max-width:760px;
+    }
+
+    /* A single “signature” underline (premium, not generic) */
+    .sig{
+      width:120px;
+      height:3px;
+      border-radius:999px;
+      background:linear-gradient(90deg, var(--navy), rgba(11,31,58,.25));
+      margin-top:4px;
+      opacity:.95;
+    }
+
+    /* Scope chips – very few, very readable */
+    .chips{
+      margin-top:10px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      max-width:760px;
+    }
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(234,240,248,.55);
+      color:rgba(11,31,58,.82);
+      font-size:12px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      font-weight:700;
+      backdrop-filter: blur(6px);
+    }
+    .chip::before{
+      content:"";
+      width:8px; height:8px;
+      border-radius:999px;
+      background:rgba(11,31,58,.55);
+    }
+    .chip.primary{
+      background:#fff;
+      box-shadow:0 0 0 6px rgba(31,106,225,.08);
+      border-color:rgba(31,106,225,.35);
+    }
+    .chip.primary::before{ background:var(--accent); }
+
+    /* Bottom: a clean “team ticker” bar (different from cards/grids) */
+    .bottom{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:18px;
+    }
+
+    .teambar{
+      flex:1;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.70);
+      backdrop-filter: blur(8px);
+      border-radius:16px;
+      padding:14px 16px;
+      box-shadow: 0 18px 40px rgba(2,6,23,.10);
+    }
+
+    .teambar .head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:10px;
+      gap:14px;
+    }
+
+    .teambar .head .t{
+      font-size:11px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--muted);
+      font-weight:800;
+    }
+    .teambar .head .n{
+      font-size:12px;
+      color:rgba(11,31,58,.60);
+      white-space:nowrap;
+    }
+
+    .names{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px 10px;
+      list-style:none;
+    }
+
+    .name{
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(11,31,58,.12);
+      background:#fff;
+      color:rgba(11,31,58,.82);
+      font-size:13px;
+      font-weight:600;
+      letter-spacing:.01em;
+      white-space:nowrap;
+    }
+
+    .slideNo{
+      font-size:12px;
+      color:rgba(11,31,58,.55);
+      white-space:nowrap;
+      text-align:right;
+      padding-bottom:2px;
+    }
+
+    /* Animations (very subtle) */
+    @keyframes rise{
+      from{ opacity:0; transform:translateY(14px); }
+      to{ opacity:1; transform:translateY(0); }
+    }
+    .brand, .meta { animation: rise .7s ease-out both; }
+    .center { animation: rise .8s ease-out .06s both; }
+    .teambar { animation: rise .8s ease-out .12s both; }
+    .curve { animation: rise .9s ease-out .10s both; }
+
+    /* Print */
+    @media print{
+      body{ background:#fff; }
+      .slide{ box-shadow:none; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="slide">
+
+    <div class="bg"></div>
+    <div class="ribbon" aria-hidden="true"></div>
+
+    <!-- Elegant curve visual (right) -->
+    <svg class="curve" viewBox="0 0 820 820" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#0B1F3A" stop-opacity="0.95"/>
+          <stop offset="1" stop-color="#1F6AE1" stop-opacity="0.85"/>
+        </linearGradient>
+        <radialGradient id="g2" cx="45%" cy="35%" r="70%">
+          <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.92"/>
+          <stop offset="0.55" stop-color="#EAF0F8" stop-opacity="0.55"/>
+          <stop offset="1" stop-color="#EAF0F8" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+
+      <!-- Outer soft glow -->
+      <circle cx="420" cy="410" r="360" fill="url(#g2)"/>
+
+      <!-- Main loop -->
+      <path
+        d="M640 140
+           C520 80, 340 120, 270 260
+           C190 420, 280 560, 420 590
+           C560 620, 700 540, 690 390
+           C684 290, 610 250, 540 270
+           C440 300, 410 440, 510 470
+           C600 495, 645 430, 620 360"
+        fill="none"
+        stroke="url(#g1)"
+        stroke-width="16"
+        stroke-linecap="round"
+        opacity="0.95"
+      />
+
+      <!-- Minimal anchor points -->
+      <circle cx="640" cy="140" r="7" fill="#1F6AE1" opacity="0.95"/>
+      <circle cx="270" cy="260" r="7" fill="#0B1F3A" opacity="0.65"/>
+      <circle cx="420" cy="590" r="7" fill="#1F6AE1" opacity="0.75"/>
+      <circle cx="620" cy="360" r="7" fill="#0B1F3A" opacity="0.55"/>
+    </svg>
+
+    <div class="wrap">
+      <!-- TOP -->
+      <header class="top">
+        <div class="brand">
+          <div class="kicker"><span class="dot"></span><span>CRM Case Study</span></div>
+          <div class="line"></div>
+          <div style="font-size:12px; color:rgba(11,31,58,.78); letter-spacing:.06em;">
+            Retail E-commerce · Customer Engagement
+          </div>
+        </div>
+
+        <div class="meta">
+          <div><b>Final Presentation</b></div>
+          <div>Project Management / IS</div>
+        </div>
+      </header>
+
+      <!-- CENTER -->
+      <main class="center">
+        <h1>CRM Implementation for Improved Customer Engagement</h1>
+        <p class="sub">
+          A structured, low-risk CRM rollout to centralize customer data and enable personalization,
+          automation, and better service quality across the customer lifecycle.
+        </p>
+        <div class="sig"></div>
+
+        <div class="chips" aria-label="Scope">
+          <div class="chip">Current process</div>
+          <div class="chip primary">Solution selection</div>
+          <div class="chip">Implementation plan</div>
+          <div class="chip">Risks & KPIs</div>
+        </div>
+      </main>
+
+      <!-- BOTTOM -->
+      <footer class="bottom">
+        <section class="teambar" aria-label="Team members">
+          <div class="head">
+            <div class="t">Project team</div>
+            <div class="n">8 members</div>
+          </div>
+
+          <!-- Neutral order, no highlight, no “first” -->
+          <ul class="names">
+            <li class="name">Aroosha SUDHEER</li>
+            <li class="name">Charbel Taouk</li>
+            <li class="name">Dhikra SEMMAR</li>
+            <li class="name">Eliz SAGER</li>
+            <li class="name">Mohamed PAREULIDZE</li>
+            <li class="name">Oumaima YEBARI</li>
+            <li class="name">Ousmane SARR</li>
+            <li class="name">Sanus THAPA</li>
+          </ul>
+        </section>
+
+        <div class="slideNo">Slide 1</div>
+      </footer>
+    </div>
+  </div>
+</body>
+</html>

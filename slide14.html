@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Slide 14 — KPIs</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== Reset + tokens ===== */
+    *, *::before, *::after{ margin:0; padding:0; box-sizing:border-box; }
+    html, body{ width:100%; height:100%; }
+    body{
+      font-family:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      background:#0b1220;
+      overflow:hidden;
+    }
+    :root{
+      --navy:#0B1F3A;
+      --ink:#0A1831;
+      --white:#FFFFFF;
+      --soft:#EAF0F8;
+      --muted:#6B7280;
+      --accent:#1F6AE1;
+
+      --stroke:rgba(11,31,58,.14);
+      --stroke2:rgba(11,31,58,.10);
+
+      --shadow:0 14px 34px rgba(2,6,23,.10);
+      --shadow2:0 10px 22px rgba(2,6,23,.08);
+
+      --r-xl:20px;
+      --r-lg:16px;
+    }
+
+    /* ===== Slide ===== */
+    .slide{
+      width:100vw; height:100vh;
+      background:var(--white);
+      position:relative;
+      overflow:hidden;
+      isolation:isolate;
+    }
+    .bg{
+      position:absolute; inset:0;
+      pointer-events:none; z-index:0;
+      background:
+        radial-gradient(circle at 14% 16%, rgba(31,106,225,.07), transparent 55%),
+        radial-gradient(circle at 88% 22%, rgba(11,31,58,.06), transparent 60%);
+    }
+
+    /* Compact padding => never cut bottom */
+    .wrap{
+      position:relative; z-index:2;
+      height:100%;
+      padding:30px 52px 22px 52px;
+      display:grid;
+      grid-template-rows:auto auto 1fr auto;
+      gap:10px;
+    }
+
+    /* ===== Header ===== */
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:18px;
+    }
+    .crumb{ display:flex; flex-direction:column; gap:8px; }
+    .kicker{
+      font-size:11px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--muted);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .dot{
+      width:9px; height:9px; border-radius:999px;
+      background:var(--accent);
+      box-shadow:0 0 0 6px rgba(31,106,225,.10);
+    }
+    .title{
+      font-family:"Playfair Display", serif;
+      font-size:30px;
+      color:var(--ink);
+      letter-spacing:-.01em;
+    }
+    .title .hl{ color:var(--accent); font-weight:800; }
+
+    .meta{
+      font-size:12px;
+      color:var(--muted);
+      text-align:right;
+      line-height:1.35;
+      white-space:nowrap;
+      padding-top:2px;
+    }
+    .meta b{ color:rgba(11,31,58,.88); font-weight:800; }
+
+    /* ===== Lead ===== */
+    .lead{
+      font-size:15.8px;
+      line-height:1.42;
+      color:rgba(11,31,58,.78);
+      max-width:980px;
+    }
+    .lead b{ color:var(--ink); font-weight:800; }
+
+    /* ===== KPI grid ===== */
+    .grid{
+      min-height:0;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      grid-template-rows:1fr 1fr;
+      gap:12px;
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      border-radius:var(--r-xl);
+      background:rgba(255,255,255,.94);
+      box-shadow:var(--shadow);
+      padding:14px 14px 12px 14px;
+      position:relative;
+      overflow:hidden;
+      display:grid;
+      grid-template-rows:auto 1fr auto;
+      gap:10px;
+      min-height:0;
+    }
+
+    .card::before{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        radial-gradient(circle at 22% 18%, rgba(31,106,225,.06), transparent 52%),
+        radial-gradient(circle at 86% 82%, rgba(11,31,58,.04), transparent 56%);
+      opacity:.6;
+      pointer-events:none;
+    }
+
+    .cardHead{
+      position:relative; z-index:2;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .leftHead{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+
+    .icon{
+      width:36px; height:36px;
+      border-radius:14px;
+      background:var(--soft);
+      border:1px solid var(--stroke2);
+      display:grid; place-items:center;
+      box-shadow:var(--shadow2);
+      flex:0 0 36px;
+    }
+    .icon svg{
+      width:18px; height:18px;
+      stroke:var(--navy);
+      stroke-width:2;
+      fill:none;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+      opacity:.92;
+    }
+
+    .hTitle{
+      font-size:13px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      font-weight:900;
+      color:var(--navy);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .hSub{
+      margin-top:2px;
+      font-size:12.6px;
+      color:rgba(11,31,58,.70);
+      line-height:1.2;
+    }
+
+    .chip{
+      position:relative; z-index:2;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid rgba(11,31,58,.12);
+      background:rgba(234,240,248,.60);
+      color:rgba(11,31,58,.70);
+      font-size:11px;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      font-weight:800;
+      white-space:nowrap;
+    }
+
+    .body{
+      position:relative; z-index:2;
+      border-radius:16px;
+      border:1px solid var(--stroke2);
+      background:var(--soft);
+      box-shadow:var(--shadow2);
+      padding:12px;
+      min-height:0;
+      display:grid;
+      align-content:start;
+      gap:8px;
+    }
+
+    .metric{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+      padding:8px 10px;
+      border-radius:14px;
+      background:rgba(255,255,255,.62);
+      border:1px solid rgba(11,31,58,.10);
+    }
+
+    .mLeft{
+      min-width:0;
+      color:rgba(11,31,58,.82);
+      font-size:13.2px;
+      line-height:1.2;
+    }
+    .mRight{
+      flex:0 0 auto;
+      font-size:11px;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      font-weight:900;
+      color:rgba(11,31,58,.62);
+      white-space:nowrap;
+      padding-left:8px;
+    }
+
+    .footLine{
+      position:relative; z-index:2;
+      font-size:12.6px;
+      color:rgba(11,31,58,.70);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .miniDot{
+      width:8px; height:8px; border-radius:999px;
+      background:var(--accent);
+      box-shadow:0 0 0 5px rgba(31,106,225,.10);
+      flex:0 0 8px;
+    }
+
+    /* ===== Footer ===== */
+    .bottom{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:12px;
+      color:var(--muted);
+      border-top:1px solid rgba(11,31,58,.10);
+      padding-top:10px;
+      gap:18px;
+    }
+
+    /* ===== Short-screen safety ===== */
+    @media (max-height:760px){
+      .wrap{ padding:26px 46px 18px 46px; gap:9px; }
+      .title{ font-size:28px; }
+      .lead{ font-size:15.2px; }
+      .grid{ gap:10px; }
+      .card{ padding:12px 12px 10px 12px; }
+      .mLeft{ font-size:12.9px; }
+      .footLine{ font-size:12.2px; }
+    }
+    @media (max-height:700px){
+      .wrap{ padding:24px 42px 16px 42px; }
+      .title{ font-size:27px; }
+      .body{ padding:10px; }
+      .metric{ padding:7px 9px; }
+    }
+
+    /* ===== Anim ===== */
+    @keyframes rise{
+      from{ opacity:0; transform:translateY(10px); }
+      to{ opacity:1; transform:translateY(0); }
+    }
+    .crumb, .meta{ animation:rise .65s ease-out both; }
+    .lead{ animation:rise .70s ease-out .04s both; }
+    .grid{ animation:rise .76s ease-out .07s both; }
+  </style>
+</head>
+
+<body>
+  <div class="slide">
+    <div class="bg"></div>
+
+    <div class="wrap">
+
+      <!-- Header -->
+      <header class="top">
+        <div class="crumb">
+          <div class="kicker"><span class="dot"></span>Performance Measurement</div>
+          <div class="title">How do we know it <span class="hl">works</span>?</div>
+        </div>
+        <div class="meta">
+          <div><b>CRM Implementation</b></div>
+          <div>Slide 14</div>
+        </div>
+      </header>
+
+      <!-- Lead -->
+      <section class="lead">
+        We track <b>4 KPI categories</b> to measure engagement, retention, customer experience, and real CRM adoption after deployment.
+      </section>
+
+      <!-- KPI grid -->
+      <main class="grid" aria-label="KPI dashboard mockup">
+
+        <!-- ENGAGEMENT -->
+        <section class="card">
+          <div class="cardHead">
+            <div class="leftHead">
+              <div class="icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M4 6h16v12H4V6Z"/>
+                  <path d="M4 7l8 6 8-6"/>
+                </svg>
+              </div>
+              <div>
+                <div class="hTitle">Engagement</div>
+                <div class="hSub">Interaction with CRM campaigns</div>
+              </div>
+            </div>
+            <div class="chip">Marketing</div>
+          </div>
+
+          <div class="body">
+            <div class="metric"><div class="mLeft">Email/SMS open rate</div><div class="mRight">%</div></div>
+            <div class="metric"><div class="mLeft">Click-through rate (CTR)</div><div class="mRight">%</div></div>
+            <div class="metric"><div class="mLeft">Abandoned cart recovery rate</div><div class="mRight">%</div></div>
+            <div class="metric"><div class="mLeft">Visits driven by CRM campaigns</div><div class="mRight">#</div></div>
+          </div>
+
+          <div class="footLine"><span class="miniDot"></span>Measured weekly on campaign reports</div>
+        </section>
+
+        <!-- RETENTION -->
+        <section class="card">
+          <div class="cardHead">
+            <div class="leftHead">
+              <div class="icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M20 12a8 8 0 0 1-14.8 4.3"/>
+                  <path d="M4 12a8 8 0 0 1 14.8-4.3"/>
+                  <path d="M6 18v-3h3"/>
+                  <path d="M18 6v3h-3"/>
+                </svg>
+              </div>
+              <div>
+                <div class="hTitle">Retention</div>
+                <div class="hSub">Repeat behavior over time</div>
+              </div>
+            </div>
+            <div class="chip">Business</div>
+          </div>
+
+          <div class="body">
+            <div class="metric"><div class="mLeft">Repeat purchase rate</div><div class="mRight">%</div></div>
+            <div class="metric"><div class="mLeft">Customer retention rate</div><div class="mRight">%</div></div>
+            <div class="metric"><div class="mLeft">Time between purchases</div><div class="mRight">days</div></div>
+          </div>
+
+          <div class="footLine"><span class="miniDot"></span>Tracked monthly for trend analysis</div>
+        </section>
+
+        <!-- CUSTOMER SATISFACTION -->
+        <section class="card">
+          <div class="cardHead">
+            <div class="leftHead">
+              <div class="icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M4 12a8 8 0 0 1 16 0"/>
+                  <path d="M6 12v4a2 2 0 0 0 2 2h2"/>
+                  <path d="M18 12v4a2 2 0 0 1-2 2h-2"/>
+                  <path d="M9 10h.01"/>
+                  <path d="M15 10h.01"/>
+                  <path d="M9 15c1.5 1 4.5 1 6 0"/>
+                </svg>
+              </div>
+              <div>
+                <div class="hTitle">Customer satisfaction</div>
+                <div class="hSub">Service quality after rollout</div>
+              </div>
+            </div>
+            <div class="chip">Support</div>
+          </div>
+
+          <div class="body">
+            <div class="metric"><div class="mLeft">Average response time</div><div class="mRight">min</div></div>
+            <div class="metric"><div class="mLeft">Issue resolution time</div><div class="mRight">h</div></div>
+            <div class="metric"><div class="mLeft">CSAT after interactions</div><div class="mRight">/5</div></div>
+            <div class="metric"><div class="mLeft">Repeated complaints</div><div class="mRight">↓</div></div>
+          </div>
+
+          <div class="footLine"><span class="miniDot"></span>Reported per ticket cycle</div>
+        </section>
+
+        <!-- CRM ADOPTION -->
+        <section class="card">
+          <div class="cardHead">
+            <div class="leftHead">
+              <div class="icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M16 11a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z"/>
+                  <path d="M2 20a6 6 0 0 1 12 0"/>
+                  <path d="M19 11a3 3 0 1 0-3-3"/>
+                  <path d="M17 20a5 5 0 0 1 5 0"/>
+                </svg>
+              </div>
+              <div>
+                <div class="hTitle">CRM adoption</div>
+                <div class="hSub">Usage + data quality</div>
+              </div>
+            </div>
+            <div class="chip">Governance</div>
+          </div>
+
+          <div class="body">
+            <div class="metric"><div class="mLeft">Active CRM users</div><div class="mRight">%</div></div>
+            <div class="metric"><div class="mLeft">Training completion rate</div><div class="mRight">%</div></div>
+            <div class="metric"><div class="mLeft">Complete customer profiles</div><div class="mRight">%</div></div>
+            <div class="metric"><div class="mLeft">Duplicate / incorrect records</div><div class="mRight">#</div></div>
+          </div>
+
+          <div class="footLine"><span class="miniDot"></span>Monitored continuously after go-live</div>
+        </section>
+
+      </main>
+
+      <!-- Footer -->
+      <footer class="bottom">
+        <div><b>Takeaway:</b> Define a baseline before go-live, then review KPIs regularly to confirm measurable CRM value.</div>
+        <div>KPIs</div>
+      </footer>
+
+    </div>
+  </div>
+</body>
+</html>
