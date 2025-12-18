@@ -3,22 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Slide 11 — Implementation Strategy</title>
+  <title>Slide 11 — Detailed Project Plan (WBS)</title>
 
-  <!-- Fonts (same vibe as your deck) -->
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
 
   <style>
-    /* =========================
-       RESET + TOKENS
-    ========================= */
-    *, *::before, *::after{ margin:0; padding:0; box-sizing:border-box; }
-    html, body{ width:100%; height:100%; }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; }
+
     body{
-      font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-      background:#0b1220;
+      font-family:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      background:#0b1220; /* preview only */
       overflow:hidden;
     }
 
@@ -41,9 +42,6 @@
       --r-md:14px;
     }
 
-    /* =========================
-       SLIDE CANVAS
-    ========================= */
     .slide{
       width:100vw;
       height:100vh;
@@ -71,12 +69,10 @@
       padding:44px 64px 40px 64px;
       display:grid;
       grid-template-rows:auto auto 1fr auto;
-      gap:14px;
+      gap:12px;
     }
 
-    /* =========================
-       HEADER
-    ========================= */
+    /* Header */
     .top{
       display:flex;
       justify-content:space-between;
@@ -116,7 +112,7 @@
       color:var(--ink);
       letter-spacing:-.01em;
     }
-    .title .hl{ color:var(--accent); font-weight:800; }
+    .hl{ color:var(--accent); font-weight:800; }
 
     .meta{
       font-size:12px;
@@ -128,9 +124,7 @@
     }
     .meta b{ color:rgba(11,31,58,.88); font-weight:800; }
 
-    /* =========================
-       LEAD LINE
-    ========================= */
+    /* Lead */
     .lead{
       display:flex;
       align-items:flex-start;
@@ -145,7 +139,6 @@
       color:rgba(11,31,58,.78);
     }
     .leadText b{ color:var(--ink); font-weight:800; }
-    .leadText .hl{ color:var(--accent); font-weight:800; }
 
     .pillRow{
       display:flex;
@@ -155,7 +148,6 @@
       justify-content:flex-end;
       min-width:340px;
     }
-
     .pill{
       display:inline-flex;
       align-items:center;
@@ -179,49 +171,67 @@
       box-shadow:0 0 0 5px rgba(31,106,225,.10);
     }
 
-    /* =========================
-       MAIN: FLOW + TIMELINE
-    ========================= */
+    /* Main layout */
     .main{
       display:grid;
-      grid-template-rows:auto 1fr;
+      grid-template-rows:1fr auto;
       gap:14px;
       min-height:0;
     }
 
-    /* --- Horizontal 3-step flow --- */
-    .flowCard{
+    /* WBS Panel */
+    .wbs{
       border:1px solid var(--stroke);
       border-radius:var(--r-xl);
       background:rgba(255,255,255,.92);
       box-shadow:var(--shadow);
-      padding:18px 18px 16px 18px;
+      padding:16px 18px 14px 18px;
       position:relative;
       overflow:hidden;
+      min-height:0;
     }
 
-    .flowCard::before{
+    .wbs::before{
       content:"";
       position:absolute;
-      inset:0;
+      left:0; top:0; bottom:0;
+      width:6px;
+      background:linear-gradient(180deg, rgba(11,31,58,.95), rgba(31,106,225,.65));
+      opacity:.95;
+    }
+
+    /* 🔽 Reduce Work Breakdown Structure content by 10% */
+.scale-wbs{
+  transform: scale(0.88);
+  transform-origin: top left;
+  width: 111.12%; /* 1 / 0.90 to prevent right clipping */
+}
+
+
+    .wbs::after{
+      content:"";
+      position:absolute;
+      inset:-40%;
       background:
-        radial-gradient(circle at 18% 10%, rgba(31,106,225,.09), transparent 52%),
-        radial-gradient(circle at 84% 64%, rgba(11,31,58,.05), transparent 55%);
-      opacity:.55;
+        radial-gradient(circle at 26% 24%, rgba(31,106,225,.07), transparent 45%),
+        radial-gradient(circle at 78% 60%, rgba(11,31,58,.05), transparent 52%);
+      transform:rotate(10deg);
+      opacity:.48;
       pointer-events:none;
     }
 
-    .flowHeader{
+    .wbsHead{
       position:relative;
       z-index:2;
+      margin-left:6px;
       display:flex;
-      justify-content:space-between;
       align-items:flex-end;
+      justify-content:space-between;
       gap:14px;
-      margin-bottom:12px;
+      margin-bottom:10px;
     }
 
-    .flowHeader .h{
+    .wbsHead .h{
       font-size:11px;
       letter-spacing:.18em;
       text-transform:uppercase;
@@ -229,7 +239,7 @@
       font-weight:900;
     }
 
-    .tag{
+    .badge{
       display:inline-flex;
       align-items:center;
       gap:10px;
@@ -243,7 +253,7 @@
       box-shadow:0 10px 20px rgba(2,6,23,.05);
       font-weight:700;
     }
-    .tag b{
+    .badge b{
       color:rgba(11,31,58,.78);
       font-weight:900;
       letter-spacing:.08em;
@@ -251,27 +261,33 @@
       font-size:11px;
     }
 
-    .steps{
+    /* 3 phase columns */
+    .cols{
       position:relative;
       z-index:2;
+      margin-left:6px;
       display:grid;
-      grid-template-columns:1fr auto 1fr auto 1fr;
-      align-items:stretch;
+      grid-template-columns:1fr 1fr 1fr;
       gap:12px;
+      min-height:0;
+      align-items:stretch;
     }
 
-    .step{
-      border:1px solid var(--stroke2);
+    .phase{
+      border:1px solid rgba(11,31,58,.12);
+      border-radius:20px;
       background:var(--soft);
-      border-radius:18px;
       box-shadow:var(--shadow2);
       padding:14px 14px 12px 14px;
       position:relative;
       overflow:hidden;
-      min-height:110px;
+      display:grid;
+      grid-template-rows:auto auto 1fr;
+      gap:10px;
+      min-height:0;
     }
 
-    .step::before{
+    .phase::before{
       content:"";
       position:absolute;
       inset:0;
@@ -282,17 +298,23 @@
       pointer-events:none;
     }
 
-    .stepTop{
+    .phaseTop{
       position:relative;
       z-index:2;
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:12px;
-      margin-bottom:8px;
+      gap:10px;
     }
 
-    .num{
+    .pLeft{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+
+    .pNum{
       width:34px;
       height:34px;
       border-radius:12px;
@@ -306,16 +328,28 @@
       flex:0 0 34px;
     }
 
-    .stepTitle{
+    .pTitle{
+      min-width:0;
+    }
+    .pTitle .name{
       font-size:13px;
       font-weight:900;
       letter-spacing:.14em;
       text-transform:uppercase;
       color:var(--navy);
-      flex:1;
+      line-height:1.05;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .pTitle .sub{
+      margin-top:3px;
+      font-size:12.6px;
+      color:rgba(11,31,58,.70);
+      line-height:1.2;
     }
 
-    .icon{
+    .pIcon{
       width:40px;
       height:40px;
       border-radius:14px;
@@ -326,8 +360,10 @@
       box-shadow:0 10px 18px rgba(2,6,23,.05);
       flex:0 0 40px;
       opacity:.96;
+      position:relative;
+      z-index:2;
     }
-    .icon svg{
+    .pIcon svg{
       width:20px; height:20px;
       stroke:var(--navy);
       stroke-width:2;
@@ -337,49 +373,68 @@
       opacity:.92;
     }
 
-    .stepDesc{
+    .section{
       position:relative;
       z-index:2;
-      font-size:14px;
-      line-height:1.40;
-      color:rgba(11,31,58,.74);
-      padding-right:6px;
+      border:1px solid rgba(11,31,58,.12);
+      background:rgba(255,255,255,.78);
+      border-radius:18px;
+      padding:10px 10px 9px 10px;
+      box-shadow:0 10px 18px rgba(2,6,23,.05);
+      overflow:hidden;
     }
-    .stepDesc b{ color:rgba(11,31,58,.88); font-weight:800; }
-    .stepDesc .hl{ color:var(--accent); font-weight:800; }
 
-    .connector{
-      width:64px;
+    .sectionHead{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin-bottom:8px;
+      font-size:11px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      font-weight:900;
+      color:rgba(11,31,58,.84);
+    }
+    .sDot{
+      width:7px; height:7px;
+      border-radius:999px;
+      background:var(--accent);
+      box-shadow:0 0 0 5px rgba(31,106,225,.10);
+      flex:0 0 7px;
+    }
+
+    .list{
       display:grid;
-      place-items:center;
-      opacity:.92;
+      gap:7px;
+      font-size:13.2px;
+      color:rgba(11,31,58,.72);
+      line-height:1.28;
     }
-    .connector svg{
-      width:42px; height:20px;
-      stroke:rgba(11,31,58,.62);
-      stroke-width:2.4;
-      fill:none;
-      stroke-linecap:round;
-      stroke-linejoin:round;
+    .li{
+      display:flex;
+      gap:8px;
+      align-items:flex-start;
+    }
+    .dash{
+      width:10px;
+      height:2px;
+      border-radius:999px;
+      background:rgba(11,31,58,.38);
+      margin-top:9px;
+      flex:0 0 10px;
     }
 
-    /* --- Simple timeline bar (no dates) --- */
-    .timelineCard{
+    /* timeline bottom */
+    .timeline{
       border:1px solid var(--stroke);
       border-radius:var(--r-xl);
       background:rgba(255,255,255,.92);
       box-shadow:var(--shadow);
-      padding:18px 18px 16px 18px;
+      padding:16px 18px 14px 18px;
       position:relative;
       overflow:hidden;
-      min-height:0;
-      display:grid;
-      grid-template-columns:1fr;
-      gap:12px;
-      align-content:start;
     }
-
-    .timelineCard::before{
+    .timeline::before{
       content:"";
       position:absolute;
       inset:0;
@@ -390,15 +445,18 @@
       pointer-events:none;
     }
 
-    .timelineHeader{
+    .tHead{
       position:relative;
       z-index:2;
       display:flex;
       justify-content:space-between;
       align-items:flex-end;
-      gap:14px;
+      gap:12px;
+      margin-left:6px;
+      margin-bottom:10px;
     }
-    .timelineHeader .h{
+
+    .tHead .h{
       font-size:11px;
       letter-spacing:.18em;
       text-transform:uppercase;
@@ -406,45 +464,39 @@
       font-weight:900;
     }
 
-    .miniLegend{
+    .tNote{
       position:relative;
       z-index:2;
-      display:flex;
+      display:inline-flex;
+      align-items:center;
       gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-      color:rgba(11,31,58,.66);
-      font-size:11px;
-      letter-spacing:.10em;
-      text-transform:uppercase;
-      font-weight:800;
-    }
-    .lgItem{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      padding:7px 9px;
+      padding:8px 10px;
       border-radius:999px;
+      background:rgba(234,240,248,.60);
       border:1px solid var(--stroke2);
-      background:rgba(234,240,248,.55);
+      color:rgba(11,31,58,.66);
+      font-size:11.5px;
+      white-space:nowrap;
       box-shadow:0 10px 20px rgba(2,6,23,.05);
+      margin-right:2px;
     }
-    .swatch{
-      width:10px; height:10px;
-      border-radius:999px;
-      background:var(--accent);
-      box-shadow:0 0 0 5px rgba(31,106,225,.10);
+    .tNote b{
+      color:rgba(11,31,58,.80);
+      font-weight:900;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      font-size:11px;
     }
 
     .barWrap{
       position:relative;
       z-index:2;
+      margin-left:6px;
       border:1px solid var(--stroke2);
       border-radius:16px;
       background:var(--soft);
       box-shadow:var(--shadow2);
-      padding:16px;
+      padding:14px;
       overflow:hidden;
     }
 
@@ -456,30 +508,31 @@
       overflow:hidden;
     }
 
-    /* segmented bar */
     .seg{
       position:absolute;
       top:0; bottom:0;
       border-radius:999px;
     }
+
+    /* proportions: Plan 25%, Build 55%, Deploy 20% */
     .seg.plan{
       left:0;
-      width:33.33%;
+      width:25%;
       background:linear-gradient(90deg, rgba(11,31,58,.82), rgba(11,31,58,.72));
     }
     .seg.build{
-      left:33.33%;
-      width:33.33%;
+      left:25%;
+      width:55%;
       background:linear-gradient(90deg, rgba(31,106,225,.70), rgba(31,106,225,.60));
     }
     .seg.deploy{
-      left:66.66%;
-      width:33.34%;
+      left:80%;
+      width:20%;
       background:linear-gradient(90deg, rgba(11,31,58,.70), rgba(31,106,225,.55));
     }
 
     .ticks{
-      margin-top:12px;
+      margin-top:10px;
       display:grid;
       grid-template-columns:1fr 1fr 1fr;
       gap:10px;
@@ -528,9 +581,7 @@
       color:rgba(11,31,58,.72);
     }
 
-    /* =========================
-       FOOTER
-    ========================= */
+    /* Footer */
     .bottom{
       display:flex;
       justify-content:space-between;
@@ -542,33 +593,19 @@
       gap:18px;
     }
 
-    /* =========================
-       MOTION (subtle)
-    ========================= */
-    @keyframes rise{
-      from{ opacity:0; transform:translateY(10px); }
-      to{ opacity:1; transform:translateY(0); }
-    }
+    /* Motion */
+    @keyframes rise{ from{ opacity:0; transform:translateY(10px);} to{ opacity:1; transform:translateY(0);} }
     .crumb, .meta{ animation:rise .65s ease-out both; }
     .lead{ animation:rise .72s ease-out .05s both; }
-    .flowCard{ animation:rise .78s ease-out .08s both; }
-    .timelineCard{ animation:rise .82s ease-out .10s both; }
+    .wbs{ animation:rise .78s ease-out .08s both; }
+    .timeline{ animation:rise .82s ease-out .10s both; }
 
-    /* =========================
-       COMPACT HEIGHT SUPPORT
-    ========================= */
+    /* Compact height */
     @media (max-height:760px){
-      .wrap{ padding:36px 56px 30px 56px; gap:12px; }
+      .wrap{ padding:36px 56px 30px 56px; gap:10px; }
       .title{ font-size:28px; }
       .leadText{ font-size:15.8px; }
-
-      .flowCard{ padding:16px; }
-      .step{ min-height:102px; padding:12px 12px 11px 12px; }
-      .stepDesc{ font-size:13.6px; }
-
-      .timelineCard{ padding:16px; }
-      .barWrap{ padding:14px; }
-      .tDesc{ font-size:12.5px; }
+      .list{ font-size:13px; }
     }
 
     @media print{
@@ -587,8 +624,8 @@
       <!-- HEADER -->
       <header class="top">
         <div class="crumb">
-          <div class="kicker"><span class="dot"></span>Implementation</div>
-          <div class="title">Implementation <span class="hl">Strategy</span></div>
+          <div class="kicker"><span class="dot"></span>Project planning</div>
+          <div class="title">Detailed Project Plan <span class="hl">(WBS)</span></div>
         </div>
         <div class="meta">
           <div><b>CRM Implementation</b></div>
@@ -599,34 +636,39 @@
       <!-- LEAD -->
       <section class="lead">
         <div class="leadText">
-          We implement the CRM using a <b>phased approach</b> to reduce disruption, validate each step, and ensure
-          <span class="hl">progressive adoption</span> with <b>low operational risk</b>.
+          Objective: deliver a <b>controlled CRM implementation</b> with clear tasks, responsibilities, and
+          <b>concrete deliverables</b> across the three phases.
         </div>
         <div class="pillRow" aria-hidden="true">
-          <div class="pill"><span class="pDot"></span>Phased implementation</div>
-          <div class="pill"><span class="pDot"></span>Progressive deployment</div>
-          <div class="pill"><span class="pDot"></span>Low risk</div>
+          <div class="pill"><span class="pDot"></span>Tasks</div>
+          <div class="pill"><span class="pDot"></span>Deliverables</div>
+          <div class="pill"><span class="pDot"></span>Controlled rollout</div>
         </div>
       </section>
 
       <!-- MAIN -->
       <main class="main">
 
-        <!-- 3-step horizontal flow -->
-        <section class="flowCard" aria-label="Plan Build Deploy flow">
-          <div class="flowHeader">
-            <div class="h">Horizontal delivery flow</div>
-            <div class="tag"><b>Key idea</b> validate each phase</div>
+        <!-- WBS -->
+        <section class="wbs" aria-label="Detailed project plan WBS">
+          <div class="wbsHead">
+            <div class="h">Work breakdown structure — PLAN / BUILD / DEPLOY</div>
+            <div class="badge"><b>Output</b> tasks + deliverables per phase</div>
           </div>
 
-          <div class="steps">
+            <div class="cols scale-wbs">
 
-            <!-- STEP 1 -->
-            <div class="step">
-              <div class="stepTop">
-                <div class="num">1</div>
-                <div class="stepTitle">Plan</div>
-                <div class="icon" aria-hidden="true">
+            <!-- PHASE 1 -->
+            <article class="phase">
+              <div class="phaseTop">
+                <div class="pLeft">
+                  <div class="pNum">1</div>
+                  <div class="pTitle">
+                    <div class="name">Plan</div>
+                    <div class="sub">Foundation, scope & governance</div>
+                  </div>
+                </div>
+                <div class="pIcon" aria-hidden="true">
                   <!-- compass -->
                   <svg viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="9"/>
@@ -634,25 +676,39 @@
                   </svg>
                 </div>
               </div>
-              <div class="stepDesc">
-                Define <b>scope</b>, objectives and stakeholders, with clear milestones to keep the project
-                <span class="hl">controlled</span>.
+
+              <div class="section">
+                <div class="sectionHead"><span class="sDot"></span>Key activities</div>
+                <div class="list">
+                  <div class="li"><span class="dash"></span><span>Analyze current customer management processes</span></div>
+                  <div class="li"><span class="dash"></span><span>Define project scope, objectives, success criteria</span></div>
+                  <div class="li"><span class="dash"></span><span>Identify stakeholders and roles</span></div>
+                  <div class="li"><span class="dash"></span><span>Define KPIs and risk baseline</span></div>
+                </div>
               </div>
-            </div>
 
-            <div class="connector" aria-hidden="true">
-              <svg viewBox="0 0 48 20">
-                <path d="M4 10h34"/>
-                <path d="M34 4l10 6-10 6"/>
-              </svg>
-            </div>
+              <div class="section">
+                <div class="sectionHead"><span class="sDot"></span>Deliverables</div>
+                <div class="list">
+                  <div class="li"><span class="dash"></span><span>Needs analysis document</span></div>
+                  <div class="li"><span class="dash"></span><span>Project scope &amp; roadmap</span></div>
+                  <div class="li"><span class="dash"></span><span>KPI framework</span></div>
+                  <div class="li"><span class="dash"></span><span>Initial risk register</span></div>
+                </div>
+              </div>
+            </article>
 
-            <!-- STEP 2 -->
-            <div class="step">
-              <div class="stepTop">
-                <div class="num">2</div>
-                <div class="stepTitle">Build</div>
-                <div class="icon" aria-hidden="true">
+            <!-- PHASE 2 -->
+            <article class="phase">
+              <div class="phaseTop">
+                <div class="pLeft">
+                  <div class="pNum">2</div>
+                  <div class="pTitle">
+                    <div class="name">Build</div>
+                    <div class="sub">Configuration, data, integration</div>
+                  </div>
+                </div>
+                <div class="pIcon" aria-hidden="true">
                   <!-- sliders -->
                   <svg viewBox="0 0 24 24">
                     <path d="M4 21v-7"/>
@@ -667,25 +723,39 @@
                   </svg>
                 </div>
               </div>
-              <div class="stepDesc">
-                Configure the CRM and integrate customer data carefully to protect
-                <b>data quality</b> and reduce integration risks.
+
+              <div class="section">
+                <div class="sectionHead"><span class="sDot"></span>Key activities</div>
+                <div class="list">
+                  <div class="li"><span class="dash"></span><span>CRM configuration (profiles, events, segments)</span></div>
+                  <div class="li"><span class="dash"></span><span>Integration with e-commerce platform</span></div>
+                  <div class="li"><span class="dash"></span><span>Data cleaning and migration</span></div>
+                  <div class="li"><span class="dash"></span><span>Automation flows setup (abandoned cart, lifecycle)</span></div>
+                </div>
               </div>
-            </div>
 
-            <div class="connector" aria-hidden="true">
-              <svg viewBox="0 0 48 20">
-                <path d="M4 10h34"/>
-                <path d="M34 4l10 6-10 6"/>
-              </svg>
-            </div>
+              <div class="section">
+                <div class="sectionHead"><span class="sDot"></span>Deliverables</div>
+                <div class="list">
+                  <div class="li"><span class="dash"></span><span>Configured CRM environment</span></div>
+                  <div class="li"><span class="dash"></span><span>Integrated customer data</span></div>
+                  <div class="li"><span class="dash"></span><span>Tested automation flows</span></div>
+                  <div class="li"><span class="dash"></span><span>Data quality validation report</span></div>
+                </div>
+              </div>
+            </article>
 
-            <!-- STEP 3 -->
-            <div class="step">
-              <div class="stepTop">
-                <div class="num">3</div>
-                <div class="stepTitle">Deploy</div>
-                <div class="icon" aria-hidden="true">
+            <!-- PHASE 3 -->
+            <article class="phase">
+              <div class="phaseTop">
+                <div class="pLeft">
+                  <div class="pNum">3</div>
+                  <div class="pTitle">
+                    <div class="name">Deploy</div>
+                    <div class="sub">Testing, go-live, adoption</div>
+                  </div>
+                </div>
+                <div class="pIcon" aria-hidden="true">
                   <!-- rocket -->
                   <svg viewBox="0 0 24 24">
                     <path d="M14 4c3 1 5 3 6 6-3 4-8 8-12 10-2-2 0-7 6-16Z"/>
@@ -694,27 +764,40 @@
                   </svg>
                 </div>
               </div>
-              <div class="stepDesc">
-                Test key flows and go-live progressively, supporting users for
-                <b>smooth adoption</b> and minimal disruption.
+
+              <div class="section">
+                <div class="sectionHead"><span class="sDot"></span>Key activities</div>
+                <div class="list">
+                  <div class="li"><span class="dash"></span><span>Functional testing &amp; validation</span></div>
+                  <div class="li"><span class="dash"></span><span>User training (marketing, support, management)</span></div>
+                  <div class="li"><span class="dash"></span><span>Progressive go-live</span></div>
+                  <div class="li"><span class="dash"></span><span>Post-deployment support &amp; monitoring</span></div>
+                </div>
               </div>
-            </div>
+
+              <div class="section">
+                <div class="sectionHead"><span class="sDot"></span>Deliverables</div>
+                <div class="list">
+                  <div class="li"><span class="dash"></span><span>Go-live approval</span></div>
+                  <div class="li"><span class="dash"></span><span>Trained users</span></div>
+                  <div class="li"><span class="dash"></span><span>Adoption &amp; performance reports</span></div>
+                  <div class="li"><span class="dash"></span><span>Updated risk assessment</span></div>
+                </div>
+              </div>
+            </article>
 
           </div>
         </section>
 
-        <!-- Simple timeline bar (no dates) -->
-        <section class="timelineCard" aria-label="Timeline bar">
-          <div class="timelineHeader">
-            <div class="h">Simple timeline (no dates)</div>
-            <div class="miniLegend" aria-hidden="true">
-              <span class="lgItem"><span class="swatch"></span> Phases</span>
-              <span class="lgItem"><span class="swatch"></span> Progressive rollout</span>
-            </div>
+        <!-- Timeline -->
+        <section class="timeline" aria-label="Indicative timeline">
+          <div class="tHead">
+            <div class="h">Indicative timeline (high-level)</div>
+            <div class="tNote"><b>Duration</b> Plan 2–3 months • Build 4–6 months • Deploy 2 months</div>
           </div>
 
           <div class="barWrap">
-            <div class="bar" role="img" aria-label="Three phase timeline bar">
+            <div class="bar" role="img" aria-label="Timeline bar with Plan Build Deploy">
               <span class="seg plan"></span>
               <span class="seg build"></span>
               <span class="seg deploy"></span>
@@ -725,7 +808,7 @@
                 <span class="tDot"></span>
                 <div class="tText">
                   <div class="tTitle">Plan</div>
-                  <div class="tDesc">Scope, stakeholders, roadmap.</div>
+                  <div class="tDesc">2–3 months — analysis, scope, KPIs, risk baseline.</div>
                 </div>
               </div>
 
@@ -733,7 +816,7 @@
                 <span class="tDot"></span>
                 <div class="tText">
                   <div class="tTitle">Build</div>
-                  <div class="tDesc">Configuration + integration readiness.</div>
+                  <div class="tDesc">4–6 months — configuration, integration, migration, flows.</div>
                 </div>
               </div>
 
@@ -741,7 +824,7 @@
                 <span class="tDot"></span>
                 <div class="tText">
                   <div class="tTitle">Deploy</div>
-                  <div class="tDesc">Testing, go-live, support.</div>
+                  <div class="tDesc">2 months — testing, training, progressive go-live, support.</div>
                 </div>
               </div>
             </div>
@@ -752,8 +835,8 @@
 
       <!-- FOOTER -->
       <footer class="bottom">
-        <div><b>Takeaway:</b> A phased strategy reduces operational disruption and keeps integration, data, and adoption risks under control.</div>
-        <div>Strategy</div>
+        <div><b>Takeaway:</b> The WBS clarifies what must be done, what is delivered, and how the project stays controlled from planning to adoption.</div>
+        <div>WBS</div>
       </footer>
 
     </div>
